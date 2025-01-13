@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:fragment="head">
+  <meta charset="UTF-8">
+  <title>Wallets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" th:href="@{/style/styles.css}" href="/static/style/styles.css">
+</head>
+
+<body>
+  <header th:fragment="header" class="container header">
+    <h1 class="header__brand">Wallet</h1>
+    <ul class="header__navigation" sec:authorize="isAuthenticated()">
+      <li><a class="header__navigation-item" href="/">Home</a></li>
+      <li><a class="header__navigation-item" href="/wallets">My Wallets</a></li>
+      <li><a class="header__navigation-item" href="/categories">Categories</a></li>
+    </ul>
+    
+    <ul class="header__navigation" sec:authorize="isAuthenticated()">
+        <li>
+            <a class="header__navigation-item" href="/profile" sec:authentication="name">PROFILE</a>
+        </li>        
+    </ul>
+    
+    <ul class="header__navigation" sec:authorize="isAnonymous()">
+      <li><a class="header__navigation-item" href="/login">Sign In</a></li>
+      <li><a class="header__navigation-item" href="/registration">Sign Up</a></li>
+    </ul>
+  </header>
+  
+  <main class="container">
+    <article class="info-box" sec:authorize="isAuthenticated()">
+      <h3 class="info-box__header">
+        Last transfers
+      </h3>
+      
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Value</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Wallet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="transfer : ${transfers}">
+                <td th:text="${#temporals.format(transfer.time, 'dd MMM yyyy HH:mm')}">...</td>
+                <td th:text="${transfer.value} + ' ' + ${transfer.walletCurrency.toUpperCase()}">...</td>
+                <td th:text="${transfer.categoryTitle}">...</td>
+                <td th:text="${transfer.description}">...</td>
+                <td><a th:href="'/transfers?walletId=' + ${transfer.walletId}" th:text="${transfer.walletTitle}">...</a></td>
+            </tr>
+        </tbody>
+      </table>
+      
+    </article>
+  </main>
+
+  <footer class="footer container">
+    <section class="content">
+      <address>
+        Developer: Alexander Lotashinsky
+      </address>
+      <time datetime="2024-12-22">22 Dec 2024</time>
+    </section>
+  </footer>
+
+  <script th:src="@{/js/script.js}" src="/static/js/script.js"></script>
+
+</body>
+
+</html>

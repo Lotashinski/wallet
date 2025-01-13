@@ -1,0 +1,24 @@
+
+.footer {
+    position: relative;
+    background-color: var(--color-m6);
+    color: var(--color-t6);
+    padding: 1.5rem;
+}
+
+.footer::before, .footer::after {
+    content: "";
+    background-color: var(--color-m5);
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: max(calc((100vw - var(--default-width)) / 2), 1rem);
+}
+
+.footer::before {
+    left: 0;
+}
+
+.footer::after {
+    right: 0;
+}

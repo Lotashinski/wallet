@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:fragment="head">
+  <meta charset="UTF-8">
+  <title>Wallets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" th:href="@{/style/styles.css}" href="/static/style/styles.css">
+</head>
+
+<body>
+
+  <div class="container">
+	  <form name="f" action="/login" method="post" class="info-box">
+	    <h3>Please sign in</h3>
+	    
+	    <span>If you have not acount, you can</span> <a href="/registration">sign up</a>
+	    <br />
+        <br />
+	    
+	    <p th:if="${param.error}">    
+	        Invalid username or password.
+	    </p>
+	    
+	    <p th:if="${param.registrationComplete}">    
+            Now you can true to Sign In
+        </p>
+	    
+	    <label for="username">Email:</label>
+	    <input type="text" name="username" id="username"/>
+	    <br />
+	    <br />
+	    
+	    <label for="password">Password:</label>
+	    <input type="password" name="password" id="password"/>
+	    <br />
+	    <br />
+	    
+	    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+	    
+	    <input type="submit" value="Send" class="button" />
+	  </form>
+  </div>
+  
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="index.html :: head"></head>
+
+<body>
+  <div th:replace="index.html :: header"></div>
+
+  <main class="container">
+    <section class="card content">
+        <a href="/wallets/new" class="button">Create new</a>
+        
+        <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Value</th>
+            <th>Settings</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr th:each="wallet: ${wallets}">
+                <td th:text="${wallet.title}">...</td>
+                <td th:text="${wallet.value} + ' ' + ${wallet.currency.toUpperCase}">...</td>
+                <td style="display: flex; gap: 1rem;">
+                    <a class="button" th:href="'/transfers?walletId=' + ${wallet.id}" href="#">More</a>
+                    <a class="button" th:href="'/wallets/' + ${wallet.id}" href="#">Edit</a>
+                </td>
+            </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <div th:replace="index.html :: footer"></div>
+
+  <script th:src="@{/js/script.js}" src="/static/js/script.js"></script>
+
+</body>
+
+</html>

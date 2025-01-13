@@ -1,0 +1,23 @@
+spring:
+    application:
+        name: wallet
+    datasource:
+        username: ${POSTGRES_USER:app}
+        password: ${POSTGRES_PASSWORD:secret}
+        url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB_NAME:app}
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        properties:
+            hibernate:
+              format_sql: true
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+    liquibase:
+        enabled: false
+    mvc:
+      hiddenmethod:
+        filter:
+          enabled: true
+server:
+    port: ${APP_PORT:8000}
