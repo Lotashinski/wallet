@@ -85,13 +85,12 @@ public class Wallet {
 	}
 	
 	public void addCategory(Category category) {
-		if (! getCategories().contains(category)) {
+		if (getCategories().contains(category)) {
 			return;
 		}
 		
 		var cw = new CategoryWallet(category, this);
 		addCategoryWallet(cw);
-		category.addCategoryWallet(cw);
 	}
 	
 	public void removeCategory(Category category) {

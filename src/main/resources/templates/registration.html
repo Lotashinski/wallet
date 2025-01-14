@@ -6,6 +6,7 @@
   <title>Wallets</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" th:href="@{/style/styles.css}" href="/static/style/styles.css">
+  <script type="text/javascript" th:src="@{/js/script.js}"></script>
 </head>
 
 <body>
@@ -20,24 +21,26 @@
         
         <p th:if="${param.error}" th:text="${param.errorText}"></p>    
         
+        
         <label for="email">Email:</label>
-        <input type="text" name="email" id="email"/>
+        <input type="text" name="email" id="email" required/>
         <br />
         <br />
         
         <label for="password">Password:</label>
-        <input type="password" name="password" id="password"/>
+        <input type="password" name="password" id="password" required/>
         <br />
         <br />
         
-        <label for="password2">Repeat password:</label>
-        <input type="password" name="passwordRepeat" id="password2"/>
+        <label for="password_repeat">Repeat password:</label>
+        <input type="password" name="passwordRepeat" id="password_repeat" required/>
         <br />
         <br />
         
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         
-        <input type="submit" value="Send" class="button"/>
+        <input type="submit" value="Send" class="button" onclick="checkPassword()"/> 
+        <span id="password_repeat_error" hidden>Passwords is not equals</span>
       </form>
   </div>
 </body>

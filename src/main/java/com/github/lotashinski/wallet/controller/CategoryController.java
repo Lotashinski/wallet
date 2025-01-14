@@ -69,7 +69,7 @@ public class CategoryController {
 	
 	@PostMapping(path = "/{id}/wallets")
 	public String editWallets(@PathVariable UUID id, @RequestParam Collection<UUID> selected) {
-		walletService.setCategoryForWallets(id, selected);
+		walletService.setCategoryWallets(id, selected);
 		
 		return "redirect:/categories/" + id;
 	}

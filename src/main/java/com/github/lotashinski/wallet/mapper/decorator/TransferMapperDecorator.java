@@ -8,6 +8,7 @@ import com.github.lotashinski.wallet.entity.Transfer;
 import com.github.lotashinski.wallet.exception.NotFoundHttpException;
 import com.github.lotashinski.wallet.mapper.TransferMapperInterface;
 import com.github.lotashinski.wallet.repository.CategoryRepository;
+import com.github.lotashinski.wallet.security.SecurityHolderAdapter;
 
 import lombok.Setter;
 
@@ -28,7 +29,7 @@ public abstract class TransferMapperDecorator implements TransferMapperInterface
 		var entity = delegate.toEntity(dto);
 		var category = dto.getCategoryId() != null
 				?	categoryRepository
-						.findById(dto.getCategoryId())
+						.findByPersonAndId(SecurityHolderAdapter.getCurrentUser(), dto.getCategoryId())
 						.orElseThrow(() -> new NotFoundHttpException(String.format("Category %s not found", dto.getCategoryId())))
 				: null;
 

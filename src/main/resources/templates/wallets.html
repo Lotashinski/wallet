@@ -23,7 +23,7 @@
                 <td th:text="${wallet.title}">...</td>
                 <td th:text="${wallet.value} + ' ' + ${wallet.currency.toUpperCase}">...</td>
                 <td style="display: flex; gap: 1rem;">
-                    <a class="button" th:href="'/transfers?walletId=' + ${wallet.id}" href="#">More</a>
+                    <a class="button" th:href="'/transfers?walletId=' + ${wallet.id}" href="#">Transfers</a>
                     <a class="button" th:href="'/wallets/' + ${wallet.id}" href="#">Edit</a>
                 </td>
             </tr>

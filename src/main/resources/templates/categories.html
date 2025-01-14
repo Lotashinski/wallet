@@ -34,7 +34,7 @@
                 <td>
                    <div th:each="wallet : ${category.inWallets}">
                         <a 
-                            th:href="'/wallets/' + ${wallet.id}" 
+                            th:href="'/transfers?walletId=' + ${wallet.id}" 
                             th:text="${wallet.title}">LINK</a>
                    </div>
                 </td>

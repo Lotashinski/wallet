@@ -1,5 +1,6 @@
 package com.github.lotashinski.wallet.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,15 +20,23 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 			FROM Category tc
 			WHERE :id = tc.id
 				AND :creator = tc.creator
-			ORDER BY tc.title
 			""")
 	Optional<Category> findByPersonAndId(@Param("creator")  Person person, @Param("id") UUID id);
 	
 	@Query(value = """
-			SELECT tc
-			FROM Category tc
-			WHERE tc.creator = :creator
-			ORDER BY tc.title
+			SELECT c
+			FROM Category c
+			WHERE c.id IN (:ids)
+				AND :creator = c.creator
+			ORDER BY lower(c.title)
+			""")
+	List<Category> findByPersonAndIds(@Param("creator")  Person person, @Param("ids") Collection<UUID> ids);
+	
+	@Query(value = """
+			SELECT c
+			FROM Category c
+			WHERE c.creator = :creator
+			ORDER BY lower(c.title)
 			""")
 	List<Category> findByPerson(@Param("creator") Person person);
 	

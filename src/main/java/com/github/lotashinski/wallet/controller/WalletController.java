@@ -1,5 +1,6 @@
 package com.github.lotashinski.wallet.controller;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.github.lotashinski.wallet.dto.ItemWalletDto;
 import com.github.lotashinski.wallet.dto.SaveWalletDto;
@@ -49,6 +51,7 @@ public class WalletController {
 	@GetMapping("/{id}")
 	public String editWalletPage(Model model, @PathVariable UUID id) {
 		model.addAttribute("wallet", walletService.get(id));
+		model.addAttribute("categories", walletService.getWalletCategories(id));
 		
 		return "wallet_form";
 	}
@@ -58,6 +61,13 @@ public class WalletController {
 		walletService.update(id, wallet);
 		
 		return "redirect:/wallets";
+	}
+	
+	@PostMapping(path = "/{id}/categories")
+	public String editWallets(@PathVariable UUID id, @RequestParam Collection<UUID> selected) {
+		walletService.setWalletCategories(id, selected);
+		
+		return "redirect:/wallets/" + id;
 	}
 	
 	@DeleteMapping("/{id}")

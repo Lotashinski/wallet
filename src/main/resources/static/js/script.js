@@ -21,3 +21,19 @@ document.addEventListener("keydown", function(ev) {
     }, 0);
 
 })
+
+function checkPassword() {
+    const passwordMain = document.getElementById("password")
+    const passwordRepeat = document.getElementById("password_repeat")
+    const passwordRepeatError = document.getElementById("password_repeat_error")
+    
+    if (passwordMain === null || passwordRepeat === null) {
+        console.error("'checkPassword()' can`t find  input fields.")
+        return
+    } 
+    
+    if (passwordMain.value !== passwordRepeat.value) {
+        passwordRepeatError.hidden = false
+        return false;
+    }
+}

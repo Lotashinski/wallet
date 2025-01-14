@@ -9,9 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.github.lotashinski.wallet.dto.ItemWalletDto;
 import com.github.lotashinski.wallet.dto.SaveWalletDto;
+import com.github.lotashinski.wallet.dto.SelectedCategoryDto;
 import com.github.lotashinski.wallet.dto.SelectedWalletsDto;
-import com.github.lotashinski.wallet.entity.Wallet;
 import com.github.lotashinski.wallet.exception.NotFoundHttpException;
+import com.github.lotashinski.wallet.mapper.CategoryMapperInterface;
 import com.github.lotashinski.wallet.mapper.WalletMapperInterface;
 import com.github.lotashinski.wallet.repository.CategoryRepository;
 import com.github.lotashinski.wallet.repository.WalletRepository;
@@ -31,6 +32,8 @@ public class WalletService implements WalletServiceInterface {
 	private final CategoryRepository categoryRepository;
 	
 	private final WalletMapperInterface walletMapper;
+	
+	private final CategoryMapperInterface categoryMapper;
 	
 	
 	@Override
@@ -93,7 +96,8 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public List<SelectedWalletsDto> getCategoryWallets(UUID categoryid) {
 		var person = SecurityHolderAdapter.getCurrentUser();
-		var category = categoryRepository.findByPersonAndId(person, categoryid)
+		var category = categoryRepository
+				.findByPersonAndId(person, categoryid)
 				.orElseThrow(() -> categoryNotFoundException(categoryid));
 		
 		var allWallets = walletRepository.findByPerson(person);
@@ -106,23 +110,21 @@ public class WalletService implements WalletServiceInterface {
 	}
 
 	@Override
-	public void setCategoryForWallets(UUID categoryId, Collection<UUID> walletsIds) {
+	public void setCategoryWallets(UUID categoryId, Collection<UUID> walletsIds) {
 		var person = SecurityHolderAdapter.getCurrentUser();
-		
+	
 		var category = categoryRepository.findByPersonAndId(person, categoryId)
 				.orElseThrow(() -> categoryNotFoundException(categoryId));
 		
 		var newState = walletRepository.findByPersonAndIds(person, walletsIds);
 		var oldState = category.getWallets();
 	
-		var retains = new HashSet<Wallet>(oldState);
-		retains.retainAll(newState);
 	
 		var forPersists = new HashSet<>(newState);
-		forPersists.removeAll(retains);
+		forPersists.removeAll(oldState);
 		
 		var forDelete = new HashSet<>(oldState);
-		forDelete.removeAll(retains);
+		forDelete.removeAll(newState);
 		
 		forDelete.stream()
 			.forEach(category::removeWallet);
@@ -135,6 +137,47 @@ public class WalletService implements WalletServiceInterface {
 	
 	private static RuntimeException categoryNotFoundException(UUID categoryId) {
 		return new NotFoundHttpException(String.format("Category %s not found", categoryId));
+	}
+
+	@Override
+	public List<SelectedCategoryDto> getWalletCategories(UUID walletId) {
+		var person = SecurityHolderAdapter.getCurrentUser();
+		var entity = walletRepository
+				.findByPersonAndId(person, walletId)
+				.orElseThrow(() -> generateNotFoundException(walletId));
+		
+		var allCategories = categoryRepository.findByPerson(person);
+		var walletCategories = new HashSet<>(categoryRepository.findByPersonAndWallet(person, entity));
+		
+		return allCategories
+				.stream()
+				.map(e -> categoryMapper.toDto(e, walletCategories.contains(e)))
+				.toList();
+	}
+
+	@Override
+	public void setWalletCategories(UUID walletId, Collection<UUID> categoriesIds) {
+		var person = SecurityHolderAdapter.getCurrentUser();
+		var entity = walletRepository
+				.findByPersonAndId(person, walletId)
+				.orElseThrow(() -> generateNotFoundException(walletId));
+		
+		var oldState = categoryRepository.findByPersonAndWallet(person, entity);
+		var newState = categoryRepository.findByPersonAndIds(person, categoriesIds);
+		
+		var forPersists = new HashSet<>(newState);
+		forPersists.removeAll(oldState);
+		
+		var forDelete = new HashSet<>(oldState);
+		forDelete.removeAll(newState);
+		
+		forDelete.stream()
+			.forEach(entity::removeCategory);
+	
+		forPersists.stream()
+			.forEach(entity::addCategory);
+		
+		walletRepository.save(entity);
 	}
 	
 }
