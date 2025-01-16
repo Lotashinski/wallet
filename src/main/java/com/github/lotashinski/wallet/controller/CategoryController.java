@@ -40,9 +40,9 @@ public class CategoryController {
 	
 	@PostMapping("/new")
 	public String newCategory(SaveCategoryDto category) {
-		transferCategoryService.create(category);
+		var item = transferCategoryService.create(category);
 		
-		return "redirect:/categories";
+		return "redirect:/categories/" + item.getId();
 	}
 	
 	@GetMapping("/new")

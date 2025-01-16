@@ -43,9 +43,9 @@ public class WalletController {
 	
 	@PostMapping("/new")
 	public String newWallet(Model model, SaveWalletDto wallet) {
-		walletService.create(wallet);
+		var item = walletService.create(wallet);
 		
-		return "redirect:/wallets";
+		return "redirect:/wallets/" + item.getId();
 	}
 	
 	@GetMapping("/{id}")
@@ -58,9 +58,9 @@ public class WalletController {
 	
 	@RequestMapping(path = "/{id}", method = {RequestMethod.PUT, RequestMethod.POST})
 	public String editWallet(@PathVariable UUID id, SaveWalletDto wallet) {
-		walletService.update(id, wallet);
+		var item = walletService.update(id, wallet);
 		
-		return "redirect:/wallets";
+		return "redirect:/wallets/" + item.getId();
 	}
 	
 	@PostMapping(path = "/{id}/categories")

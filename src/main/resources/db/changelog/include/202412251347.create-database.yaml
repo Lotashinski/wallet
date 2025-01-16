@@ -1,0 +1,164 @@
+databaseChangeLog:
+  - changeSet:
+      id: "202412251347"
+      author: lotashinski
+      changes:
+        - createTable:
+            tableName: category
+            columns:
+            - column:
+                name: id
+                type: uuid
+                constraints:
+                    primaryKey: true
+            - column:
+                name: title
+                type: varchar(255)
+                constraints:
+                    nullable: false
+            - column: 
+                name: creator_id
+                type: uuid
+                constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: category_wallet
+            columns:
+            - column:
+                name: category_id
+                type: uuid
+                constraints:
+                    primaryKey: true   
+            - column:
+                name: wallet_id
+                type: uuid
+                constraints:
+                    primaryKey: true
+        
+        - createTable:
+            tableName: person
+            columns:
+            - column:
+                name: id
+                type: uuid
+                constraints:
+                    primaryKey: true
+            - column:
+                name: created_at
+                type: datetime
+                constraints:
+                    nullable: false
+            - column:
+                name: email
+                type: varchar(255)
+                constraints:
+                    unique: true
+                    nullable: false
+            - column:
+                name: password
+                type: varchar(255)
+                constraints:
+                    nullable: false
+        
+        - createTable:
+            tableName: transfer
+            columns:
+            - column:
+                name: id
+                type: uuid
+                constraints:
+                    primaryKey: true
+            - column:
+                name: description
+                type: clob
+            - column:
+                name: time
+                type: datetime
+            - column:
+                name: value
+                type: numeric(10,2)
+            - column:
+                name: category_id
+                type: uuid
+            - column:
+                name: wallet_id
+                type: uuid
+                constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: wallet
+            columns:
+            - column:
+                name: id
+                type: uuid
+                constraints:
+                    primaryKey: true
+            - column:
+                name: currency
+                type: varchar(5)
+            - column:
+                name: title
+                type: varchar(255)
+                constraints:
+                    nullable: false
+            - column:
+                name: creator_id
+                type: uuid
+                constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            constraintName: fk_category_to_person
+            baseTableName: category
+            baseColumnNames: creator_id
+            referencedTableName: person
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            constraintName: fk_category_wallet_to_category
+            baseTableName: category_wallet
+            baseColumnNames: category_id
+            referencedTableName: category
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            constraintName: fk_category_wallet_to_wallet
+            baseTableName: category_wallet
+            baseColumnNames: wallet_id
+            referencedTableName: wallet
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            constraintName: fk_transfer_to_category
+            baseTableName: transfer
+            baseColumnNames: category_id
+            referencedTableName: category
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            constraintName: fk_transfer_to_wallet
+            baseTableName: transfer
+            baseColumnNames: wallet_id
+            referencedTableName: wallet
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            constraintName: fk_wallet_to_person
+            baseTableName: wallet
+            baseColumnNames: creator_id
+            referencedTableName: person
+            referencedColumnNames: id
+            onDelete: CASCADE
+            onUpdate: RESTRICT
