@@ -12,6 +12,22 @@ services:
       volumes:
         - ./volumes/db:/var/lib/postgresql/data
 
+    app:
+      container_name: app
+      build: ./
+      networks:
+        - internal
+      environment:
+        POSTGRES_DB_NAME: ${DB_NAME:-app}
+        POSTGRES_USER: ${DB_USER:?error}
+        POSTGRES_PASSWORD: ${DB_PASSWORD:?error}
+        POSTGRES_HOST: postgres
+        POSTGRES_PORT: 5432
+      depends_on:
+      - postgres
+      ports:
+      - "8000:8000"   
+      
 networks:
   internal:
     driver: bridge
