@@ -20,7 +20,9 @@
     
     <ul class="header__navigation" sec:authorize="isAuthenticated()">
         <li>
-            <a class="header__navigation-item" href="/profile" sec:authentication="name">PROFILE</a>
+            <a class="header__navigation-item" href="/profile" >
+                <span sec:authentication="name"></span>
+            </a>
         </li>        
     </ul>
     
