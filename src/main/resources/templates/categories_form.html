@@ -28,9 +28,13 @@
     </section>
     
     <section class="card content" th:if="${wallets != null}">
-        <h3>Select wallets:</h3>
-        <form method="POST" th:action="'/categories/' + ${category.id} + '/wallets'">
-            
+        <h3>Wallets</h3>
+        
+        <p th:if="${wallets.isEmpty()}">
+           <a href="/wallets/new">Create a wallet</a> first to come back here later.
+        </p>
+        
+        <form th:if="${ !wallets.isEmpty()}" method="POST" th:action="'/categories/' + ${category.id} + '/wallets'">
             <div th:each="wallet : ${wallets}">
                 <input type="checkbox" 
                     th:id="${wallet.walletId}" 
@@ -40,11 +44,12 @@
                     />
                 <label th:for="${wallet.walletId}" th:text="${wallet.walletTitle} + ' (' + ${wallet.currency.toUpperCase()} + ')'">WATTET_TITLE</label>
             </div>
+            
             <br />
             <br />
             
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <input type="submit" class="button" value="Send" />
+            <input type="submit" class="button" value="Set" />
         </form>
     </section>
     

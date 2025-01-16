@@ -30,8 +30,27 @@
     </ul>
   </header>
   
-  <main class="container">
-    <article class="info-box" sec:authorize="isAuthenticated()">
+  <main class="container" sec:authorize="isAuthenticated()">
+  
+    <article th:if="${wallets.isEmpty() || categories.isEmpty()}" class="info-box">
+        <p class="accent center">
+            You have not created any 
+            <span th:if="${wallets.isEmpty() && categories.isEmpty()}">wallet or category</span>
+            <span th:if="${wallets.isEmpty() && ! categories.isEmpty()}">wallet</span>
+            <span th:if="${! wallets.isEmpty() && categories.isEmpty()}">category</span> 
+            yet!
+        </p>
+        <p class="medium center">
+            Maybe it's time to fix this and
+            <a th:if="${wallets.isEmpty()}"
+                 href="/wallets/new">create new wallet</a> 
+            <span th:if="${wallets.isEmpty() && categories.isEmpty()}">or</span>
+            <a th:if="${categories.isEmpty()}"
+                href="/categories/new">create new category</a>?
+        </p>
+    </article>
+    
+    <article th:if="${! transfers.isEmpty()}" class="info-box">
       <h3 class="info-box__header">
         Last transfers
       </h3>

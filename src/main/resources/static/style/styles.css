@@ -49,6 +49,20 @@ a {
     color: var(--color-m1);
 }
 
+.center {
+	width: 100%;
+	text-align: center;
+}
+
+.accent {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.medium {
+    font-size: 1.15rem;
+}
+
 .content {
     padding: 1.5rem;
     overflow: scroll;

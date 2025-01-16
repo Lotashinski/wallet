@@ -8,9 +8,13 @@
 
   <main class="container">
     <section class="card content">
-        <a href="/wallets/new" class="button">Create new</a>
+        <a href="/wallets/new" class="button">Create new wallet</a>
         
-        <table class="table">
+        <p th:if="${wallets.isEmpty()}" class="medium center">
+            It's empty here for now. Create a new wallet to get started.
+        </p>
+        
+        <table class="table" th:if="${! wallets.isEmpty()}">
         <thead>
           <tr>
             <th>Title</th>

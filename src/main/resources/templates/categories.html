@@ -10,10 +10,13 @@
     <section class="card content">
         <button th:if="${parent != null}" onclick="history.back()" class="button button-cancel">Go back</button>
 
-        <a th:if="${parent != null}" th:href="'/categories/new?parentId=' + ${parent}" class="button">Create new</a>
-        <a th:if="${parent == null}" href="/categories/new" class="button">Create new</a>
+        <a th:if="${parent == null}" href="/categories/new" class="button">Create new category</a>
         
-        <table class="table">
+        <p th:if="${categories.isEmpty()}" class="medium center">
+            It's empty here for now. Create a new category to get started.
+        </p>
+        
+        <table class="table" th:if="${! categories.isEmpty()}">
         <thead>
           <tr>
             <th>Title</th>
