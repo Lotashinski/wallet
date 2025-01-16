@@ -30,6 +30,11 @@
     <section class="card content" th:if="${wallets != null}">
         <h3>Wallets</h3>
         
+        <p>
+            List of wallets for future transfers where this category is displayed. 
+            When changing the list, old transactions are not affected.
+        </p>
+        
         <p th:if="${wallets.isEmpty()}">
            <a href="/wallets/new">Create a wallet</a> first to come back here later.
         </p>
@@ -42,7 +47,9 @@
                     th:value="${wallet.walletId}" 
                     th:checked="${wallet.selected}"
                     />
-                <label th:for="${wallet.walletId}" th:text="${wallet.walletTitle} + ' (' + ${wallet.currency.toUpperCase()} + ')'">WATTET_TITLE</label>
+                <label th:for="${wallet.walletId}" th:text="${wallet.walletTitle} + ' (' + ${wallet.currency.toUpperCase()} + ')'">
+                    WALLET_TITLE
+                </label>
             </div>
             
             <br />
@@ -56,7 +63,12 @@
     <section th:if="${category.id != null}" class="info-box">
         <h3 class="info-box__header">Danger zone</h3>
         <form th:action="'/categories/' + ${category.id}" th:method="delete">
-            <p>Irreversible operation. All operations and settings will be deleted permanently.</p>
+            <p>
+                Irreversible operation. All operations and settings will be deleted permanently. 
+                <span class="underline">
+                    All related transactions will lose their category, but will be saved in the system.
+                </span>
+            </p>
             <input type="submit" class="button button-cancel" value="Delete">
         </form>
     </section>

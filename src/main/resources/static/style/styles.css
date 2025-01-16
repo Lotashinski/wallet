@@ -50,6 +50,10 @@ a {
     color: var(--color-m1);
 }
 
+.underline {
+	text-decoration: underline;
+}
+
 .fcenter {
 	min-width: 100vw;
 	min-height: 100vh;
@@ -84,7 +88,7 @@ a {
     display: flex;
     flex-direction: column;
     align-items: self-start;
-    gap: 1rem;
+    gap: .5rem;
 }
 
 .box {
