@@ -64,7 +64,7 @@ public class WalletController {
 	}
 	
 	@PostMapping(path = "/{id}/categories")
-	public String editWallets(@PathVariable UUID id, @RequestParam Collection<UUID> selected) {
+	public String editWalletCategories(@PathVariable UUID id, @RequestParam(required = false) Collection<UUID> selected) {
 		walletService.setWalletCategories(id, selected);
 		
 		return "redirect:/wallets/" + id;
