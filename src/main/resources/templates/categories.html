@@ -13,7 +13,7 @@
         <a th:if="${parent == null}" href="/categories/new" class="button">Create new category</a>
         
         <p th:if="${categories.isEmpty()}" class="medium center">
-            It's empty here for now. Create a new category to get started.
+            It's empty here for now. Click the button and create and create a new category to get started.
         </p>
         
         <table class="table" th:if="${! categories.isEmpty()}">
