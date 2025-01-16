@@ -4,7 +4,7 @@
 <head th:replace="index.html :: head"></head>
 
 <body>
-  <div class="container">
+  <div class="fcenter">
       <form name="f" action="/registration" method="post" class="info-box">
         <h3>Please sign up</h3>
         
@@ -33,7 +33,7 @@
         
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         
-        <input type="submit" class="button" value="Change" onclick="return checkPassword()"/>
+        <input type="submit" class="button" value="Send" onclick="return checkPassword()"/>
         <span id="password_repeat_error" hidden>Passwords is not equals!</span>
         <span id="password_lenght_error" hidden>Password is too short! (Only 6 characters or more)</span>
       </form>

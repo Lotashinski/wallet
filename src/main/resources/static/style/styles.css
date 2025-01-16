@@ -33,6 +33,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-width: 100vh;
     gap: 1rem;
     position: absolute;
 }
@@ -47,6 +48,14 @@ main {
 
 a {
     color: var(--color-m1);
+}
+
+.fcenter {
+	min-width: 100vw;
+	min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .center {
