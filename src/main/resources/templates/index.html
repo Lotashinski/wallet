@@ -14,7 +14,7 @@
     <h1 class="header__brand">Wallet</h1>
     <ul class="header__navigation" sec:authorize="isAuthenticated()">
       <li><a class="header__navigation-item" href="/">Home</a></li>
-      <li><a class="header__navigation-item" href="/wallets">My Wallets</a></li>
+      <li><a class="header__navigation-item" href="/wallets">My wallets</a></li>
       <li><a class="header__navigation-item" href="/categories">Categories</a></li>
     </ul>
     
@@ -47,6 +47,12 @@
             <span th:if="${wallets.isEmpty() && categories.isEmpty()}">or</span>
             <a th:if="${categories.isEmpty()}"
                 href="/categories/new">create new category</a>?
+        </p>
+    </article>
+    
+    <article th:if="${transfers.isEmpty()}" class="info-box">
+        <p class="center">
+            Add expenses or income to see information here
         </p>
     </article>
     
