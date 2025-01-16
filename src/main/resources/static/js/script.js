@@ -26,14 +26,16 @@ function checkPassword() {
     const passwordMain = document.getElementById("password")
     const passwordRepeat = document.getElementById("password_repeat")
     const passwordRepeatError = document.getElementById("password_repeat_error")
+    const passwordLengthError = document.getElementById("password_lenght_error")
     
     if (passwordMain === null || passwordRepeat === null) {
         console.error("'checkPassword()' can`t find  input fields.")
         return
     } 
     
-    if (passwordMain.value !== passwordRepeat.value) {
-        passwordRepeatError.hidden = false
-        return false;
-    }
+    passwordRepeatError.hidden = passwordMain.value === passwordRepeat.value 
+    passwordLengthError.hidden = passwordMain.value.length > 5
+     
+    return passwordMain.value === passwordRepeat.value
+        && passwordMain.value.length > 5
 }

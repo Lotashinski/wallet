@@ -1,4 +1,4 @@
-package com.github.lotashinski.wallet.security.exception;
+package com.github.lotashinski.wallet.exception;
 
 public class UsernameAlreadyExistsException extends RuntimeException {
 

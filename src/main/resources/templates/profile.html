@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="index.html :: head"></head>
+
+<body>
+  <div th:replace="index.html :: header"></div>
+
+  <main class="container">
+    <article class="card content">
+        <h3>Profile info</h3>
+        <p>
+            Email: <span th:text="${person.email}"></span>
+            <br />
+            Created At: <span th:text="${#temporals.format(person.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+        </p>
+        
+        <a href="/logout">Logout</a>
+        
+    </article>
+    
+    <section class="card content">
+        <h3>Change password</h3>
+        <form action="/profile/change_password" method="post">
+        
+            <label for="current_password">Current password:</label>
+            <input type="password" name="currentPassword" id="current_password" required/>
+            <br />
+            <br />
+        
+            <label for="password">New password:</label>
+            <input type="password" name="newPassword" id="password" required/>
+            <br />
+            <br />
+        
+            <label for="password_repeat">Repeat password:</label>
+            <input type="password" name="passwordRepeat" id="password_repeat" required/>
+            <br />
+            <br />
+        
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        
+            <input type="submit" class="button" value="Change" onclick="return checkPassword()"/> 
+            <span id="password_repeat_error" hidden="true">
+                Passwords is not equals!
+            </span>
+            <span id="password_lenght_error" hidden="true">
+                Password is too short! (Only 6 characters or more)
+            </span>
+            
+            <p th:if="${param.passwordChangeSuccess}">
+                Password changed
+            </p>
+            
+            <p th:if="${param.passwordChangeException}">
+                The current password is incorrect
+            </p>    
+      </form>
+    </section>
+  </main>
+
+  <div th:replace="index.html :: footer"></div>
+
+</body>
+
+</html>

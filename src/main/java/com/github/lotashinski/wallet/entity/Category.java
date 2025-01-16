@@ -1,6 +1,8 @@
 package com.github.lotashinski.wallet.entity;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -54,6 +56,8 @@ public class Category {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "category")
 	private Set<CategoryWallet> categoryWallets = new HashSet<>();
 	
+	@OneToMany(mappedBy = "category")
+	private List<Transfer> transfers = new ArrayList<>();
 	
 	public void addCategoryWallet(CategoryWallet categoryWallet) {
 		var cwSet = getCategoryWallets();

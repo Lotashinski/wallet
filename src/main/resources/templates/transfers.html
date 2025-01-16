@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org">
 
-<head>
-  <meta charset="UTF-8">
-  <title>Transfers</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" th:href="@{/style/styles.css}" href="/static/style/styles.css">
-</head>
+<head th:replace="index.html :: head"></head>
 
 <body>
   <div th:replace="index.html :: header"></div>
@@ -48,8 +43,6 @@
   </main>
 
   <div th:replace="index.html :: footer"></div>
-
-  <script th:src="@{/js/script.js}" src="/static/js/script.js"></script>
 
 </body>
 

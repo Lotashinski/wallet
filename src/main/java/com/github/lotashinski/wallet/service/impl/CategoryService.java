@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class CategoryService implements CategoryServiceInterfate {
 	
-	private final CategoryRepository transferCategoryRepository;
+	private final CategoryRepository categoryRepository;
 	
 	private final WalletRepository walletRepository;
 	
@@ -46,7 +46,7 @@ public class CategoryService implements CategoryServiceInterfate {
 	public ItemCategoryDto get(UUID id) {
 		var person = SecurityHolderAdapter.getCurrentUser();
 		
-		return transferCategoryRepository
+		return categoryRepository
 				.findByPersonAndId(person, id)
 				.map(c -> transferCategoryMapper.toDto(c, findByCategoryInTransfers(c)))
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Category(%s) not found", id.toString())));
@@ -58,7 +58,7 @@ public class CategoryService implements CategoryServiceInterfate {
 		var entity = transferCategoryMapper.toEntity(dto);
 	
 		entity.setCreator(SecurityHolderAdapter.getCurrentUser());
-		transferCategoryRepository.save(entity);
+		categoryRepository.save(entity);
 
 		return transferCategoryMapper.toDto(entity, List.of());
 	}
@@ -68,10 +68,10 @@ public class CategoryService implements CategoryServiceInterfate {
 	public ItemCategoryDto update(UUID id, SaveCategoryDto category) {
 		var person = SecurityHolderAdapter.getCurrentUser();
 		
-		return transferCategoryRepository
+		return categoryRepository
 				.findByPersonAndId(person, id)
 				.map(e -> transferCategoryMapper.updateEntity(category, e))
-				.map(transferCategoryRepository::save)
+				.map(categoryRepository::save)
 				.map(c -> transferCategoryMapper.toDto(c, findByCategoryInTransfers(c)))
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Category(%s) not found", id.toString())));
 	}
@@ -81,17 +81,21 @@ public class CategoryService implements CategoryServiceInterfate {
 	public void delete(UUID id) {
 		var person = SecurityHolderAdapter.getCurrentUser();
 		
-		var entity = transferCategoryRepository
+		var entity = categoryRepository
 				.findByPersonAndId(person, id)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Category(%s) not found", id.toString())));
-		transferCategoryRepository.delete(entity);
+		
+		entity.getTransfers()
+			.forEach(t -> t.setCategory(null));
+		
+		categoryRepository.delete(entity);
 	}
 
 	@Override
 	public List<ItemCategoryDto> getAll() {
 		var person = SecurityHolderAdapter.getCurrentUser();
 		
-		var categories = transferCategoryRepository
+		var categories = categoryRepository
 				.findByPerson(person);
 		var walletMap = findByCategoriesInTransfers(categories);
 		
@@ -108,7 +112,7 @@ public class CategoryService implements CategoryServiceInterfate {
 				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %s not found", walletId)));
 		
-		var categories = transferCategoryRepository
+		var categories = categoryRepository
 				.findByPersonAndWallet(person, wallet);
 		var walletMap = findByCategoriesInTransfers(categories);
 		

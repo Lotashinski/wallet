@@ -1,4 +1,4 @@
-package com.github.lotashinski.wallet.security;
+package com.github.lotashinski.wallet.service;
 
 import com.github.lotashinski.wallet.dto.RegistrationDto;
 

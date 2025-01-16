@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.github.lotashinski.wallet.dto.RegistrationDto;
-import com.github.lotashinski.wallet.security.RegistrationServiceInterface;
+import com.github.lotashinski.wallet.service.RegistrationServiceInterface;
 
 import lombok.RequiredArgsConstructor;
 

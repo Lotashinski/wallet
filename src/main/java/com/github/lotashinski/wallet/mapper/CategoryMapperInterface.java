@@ -23,18 +23,21 @@ public interface CategoryMapperInterface {
 	@Mapping(target = "creator", ignore = true)
 	@Mapping(target = "wallets", ignore = true)
 	@Mapping(target = "categoryWallets", ignore = true)
+	@Mapping(target = "transfers", ignore = true)
 	Category toEntity(ItemCategoryDto dto);
 	
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "creator", ignore = true)
 	@Mapping(target = "wallets", ignore = true)
 	@Mapping(target = "categoryWallets", ignore = true)
+	@Mapping(target = "transfers", ignore = true)
 	Category toEntity(SaveCategoryDto dto);
 	
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "creator", ignore = true)
 	@Mapping(target = "wallets", ignore = true)
 	@Mapping(target = "categoryWallets", ignore = true)
+	@Mapping(target = "transfers", ignore = true)
 	Category updateEntity(SaveCategoryDto dto, @MappingTarget Category target);
 	
 	@Mapping(target = "categoryId", source = "entity.id")

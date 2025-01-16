@@ -23,6 +23,7 @@ public interface WalletMapperInterface {
 	@Mapping(target = "value", ignore = true)
 	@Mapping(target = "creator", ignore = true)
 	@Mapping(target = "categories", ignore = true)
+	@Mapping(target = "categoryWallets", ignore = true)
 	Wallet toEntity(ItemWalletDto dto);
 	
 	@Mapping(target = "id", ignore = true)
@@ -30,6 +31,7 @@ public interface WalletMapperInterface {
 	@Mapping(target = "value", ignore = true)
 	@Mapping(target = "creator", ignore = true)
 	@Mapping(target = "categories", ignore = true)
+	@Mapping(target = "categoryWallets", ignore = true)
 	Wallet toEntity(SaveWalletDto dto);
 	
 	@Mapping(target = "id", ignore = true)
@@ -37,6 +39,7 @@ public interface WalletMapperInterface {
 	@Mapping(target = "value", ignore = true)
 	@Mapping(target = "creator", ignore = true)
 	@Mapping(target = "categories", ignore = true)
+	@Mapping(target = "categoryWallets", ignore = true)
 	Wallet updateEntity(SaveWalletDto dto, @MappingTarget Wallet target);
 	
 }
