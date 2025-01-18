@@ -11,6 +11,7 @@ import com.github.lotashinski.wallet.dto.ItemWalletDto;
 import com.github.lotashinski.wallet.dto.SaveWalletDto;
 import com.github.lotashinski.wallet.dto.SelectedCategoryDto;
 import com.github.lotashinski.wallet.dto.SelectedWalletsDto;
+import com.github.lotashinski.wallet.entity.Sum;
 import com.github.lotashinski.wallet.exception.NotFoundHttpException;
 import com.github.lotashinski.wallet.mapper.CategoryMapperInterface;
 import com.github.lotashinski.wallet.mapper.WalletMapperInterface;
@@ -178,6 +179,11 @@ public class WalletService implements WalletServiceInterface {
 			.forEach(entity::addCategory);
 		
 		walletRepository.save(entity);
+	}
+
+	@Override
+	public Collection<Sum> getSumForAllWallets() {
+		return walletRepository.getSumForPerson(SecurityHolderAdapter.getCurrentUser());
 	}
 	
 }

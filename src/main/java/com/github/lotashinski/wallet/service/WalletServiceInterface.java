@@ -8,11 +8,13 @@ import com.github.lotashinski.wallet.dto.ItemWalletDto;
 import com.github.lotashinski.wallet.dto.SaveWalletDto;
 import com.github.lotashinski.wallet.dto.SelectedCategoryDto;
 import com.github.lotashinski.wallet.dto.SelectedWalletsDto;
+import com.github.lotashinski.wallet.entity.Sum;
 
 public interface WalletServiceInterface {
 	
 	Collection<ItemWalletDto> getAll();
 	
+	Collection<Sum> getSumForAllWallets();
 	
 	List<SelectedWalletsDto> getCategoryWallets(UUID categoryId);
 	

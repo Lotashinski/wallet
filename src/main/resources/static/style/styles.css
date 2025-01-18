@@ -50,6 +50,20 @@ a {
     color: var(--color-m1);
 }
 
+form [type=text], form input[type=password], form textarea {
+	width: 100%;
+	border: 1px solid var(--color-t3);
+}
+
+form textarea {
+	resize: vertical;
+}
+
+form label {
+	text-align: left;
+	display: inline-block;
+}
+
 .underline {
 	text-decoration: underline;
 }
@@ -160,6 +174,14 @@ h1, h2, h3, h4, h5, h6, li::marker {
 	border: none;
 	margin-bottom: 20px;
     border-spacing: 0;
+}
+
+.right, .table td.right {
+  text-align: right;
+}
+
+.money {
+	font-family: monospace;
 }
 
 .table thead th {

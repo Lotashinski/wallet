@@ -7,14 +7,29 @@
   <div th:replace="index.html :: header"></div>
 
   <main class="container">
-    <section class="card content">
+    <section class="card content" th:if="${wallets.isEmpty()}">
         <a href="/wallets/new" class="button">Create new wallet</a>
-        
-        <p th:if="${wallets.isEmpty()}" class="medium center">
+    
+        <p class="medium center">
             It's empty here for now. Click the button and create a new wallet to get started.
         </p>
+    </section>
+  
+    <section class="card content" th:if="${! wallets.isEmpty()}">
+        <a href="/wallets/new" class="button">Create new wallet</a>
         
-        <table class="table" th:if="${! wallets.isEmpty()}">
+        <b>Amount in wallets</b>
+        <table>
+            <tr th:each="item : ${sum}" class="money">
+                <td th:text="${item.currency.toUpperCase()} + ': '">
+                </td>
+                <td th:text="${item.value}" class="right">
+                </td>
+            </tr>
+        </table>
+        
+        
+        <table class="table">
         <thead>
           <tr>
             <th>Title</th>
@@ -25,7 +40,7 @@
         <tbody>
             <tr th:each="wallet: ${wallets}">
                 <td th:text="${wallet.title}">...</td>
-                <td th:text="${wallet.value} + ' ' + ${wallet.currency.toUpperCase}">...</td>
+                <td class="money right" th:text="${wallet.value} + ' ' + ${wallet.currency.toUpperCase}">...</td>
                 <td style="display: flex; gap: 1rem;">
                     <a class="button" th:href="'/transfers?walletId=' + ${wallet.id}" href="#">Transfers</a>
                     <a class="button" th:href="'/wallets/' + ${wallet.id}" href="#">Edit</a>
@@ -33,6 +48,7 @@
             </tr>
         </tbody>
       </table>
+      
     </section>
   </main>
 

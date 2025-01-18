@@ -30,6 +30,7 @@ public class WalletController {
 	@GetMapping
 	public String index(Model model) {
 		model.addAttribute("wallets", walletService.getAll());
+		model.addAttribute("sum", walletService.getSumForAllWallets());
 		
 		return "wallets";
 	}
