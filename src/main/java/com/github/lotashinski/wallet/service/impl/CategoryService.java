@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.lotashinski.wallet.dto.ItemCategoryDto;
 import com.github.lotashinski.wallet.dto.SaveCategoryDto;
 import com.github.lotashinski.wallet.entity.Category;
+import com.github.lotashinski.wallet.entity.CategoryWallet;
+import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.entity.Transfer;
 import com.github.lotashinski.wallet.entity.Wallet;
 import com.github.lotashinski.wallet.exception.NotFoundHttpException;
@@ -44,7 +47,9 @@ public class CategoryService implements CategoryServiceInterfate {
 	
 	@Override
 	public ItemCategoryDto get(UUID id) {
-		var person = SecurityHolderAdapter.getCurrentUser();
+		log.info("Get category {}", id);
+		
+		Person person = SecurityHolderAdapter.getCurrentUser();
 		
 		return categoryRepository
 				.findByPersonAndId(person, id)
@@ -55,7 +60,9 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Transactional
 	@Override
 	public ItemCategoryDto create(SaveCategoryDto dto) {
-		var entity = transferCategoryMapper.toEntity(dto);
+		log.info("Create category {}", dto);
+		
+		Category entity = transferCategoryMapper.toEntity(dto);
 	
 		entity.setCreator(SecurityHolderAdapter.getCurrentUser());
 		categoryRepository.save(entity);
@@ -66,7 +73,9 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Transactional
 	@Override
 	public ItemCategoryDto update(UUID id, SaveCategoryDto category) {
-		var person = SecurityHolderAdapter.getCurrentUser();
+		log.info("Update category {} {}", id, category);
+		
+		Person person = SecurityHolderAdapter.getCurrentUser();
 		
 		return categoryRepository
 				.findByPersonAndId(person, id)
@@ -79,9 +88,11 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Transactional
 	@Override
 	public void delete(UUID id) {
-		var person = SecurityHolderAdapter.getCurrentUser();
+		log.info("Delete category {}", id);
 		
-		var entity = categoryRepository
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		Category entity = categoryRepository
 				.findByPersonAndId(person, id)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Category(%s) not found", id.toString())));
 		
@@ -93,28 +104,33 @@ public class CategoryService implements CategoryServiceInterfate {
 
 	@Override
 	public List<ItemCategoryDto> getAll() {
-		var person = SecurityHolderAdapter.getCurrentUser();
+		log.info("Get personal categories");
 		
-		var categories = categoryRepository
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		Collection<Category> categories = categoryRepository
 				.findByPerson(person);
-		var walletMap = findByCategoriesInTransfers(categories);
+		Map<Category, ? extends Collection<Wallet>> useWalletMap = findByCategoriesInTransfers(categories);
+		Map<Category, ? extends Collection<Wallet>> linkWalletMap = findByLinkedCategories(categories);
 		
 		return categories
 				.stream()
-				.map(e -> transferCategoryMapper.toDto(e, walletMap.get(e)))
+				.map(e -> transferCategoryMapper.toDto(e, useWalletMap.get(e), linkWalletMap.get(e)))
 				.toList();
 	}
 	
 	@Override
 	public List<ItemCategoryDto> getWalletCategories(UUID walletId) {
-		var person = SecurityHolderAdapter.getCurrentUser();
-		var wallet = walletRepository
+		log.info("Get wallet {} categories", walletId);
+		
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		Wallet wallet = walletRepository
 				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %s not found", walletId)));
 		
-		var categories = categoryRepository
+		Collection<Category> categories = categoryRepository
 				.findByPersonAndWallet(person, wallet);
-		var walletMap = findByCategoriesInTransfers(categories);
+		Map<Category, ? extends Collection<Wallet>> walletMap = findByCategoriesInTransfers(categories);
 		
 		return categories
 				.stream()
@@ -126,10 +142,25 @@ public class CategoryService implements CategoryServiceInterfate {
 		return findByCategoriesInTransfers(List.of(c)).get(c);
 	}
 	
+	private Map<Category, ? extends Collection<Wallet>> findByLinkedCategories(
+			Collection<? extends Category> categories) {
+		
+		return walletRepository
+				.findByCategories(categories)
+				.stream()
+				.collect(Collectors.groupingBy(CategoryWallet::getCategory, 
+							Collectors.mapping(CategoryWallet::getWallet, 
+										Collectors.toSet()
+								)
+							)
+						);
+	}
+	
 	private	Map<Category, ? extends Collection<Wallet>> findByCategoriesInTransfers(
 			Collection<? extends Category> categories) {
 		
-		return transferRepository.findByCategories(categories)
+		return transferRepository
+			.findByCategories(categories)
 			.stream()
 			.collect(HashMap<Category, Set<Wallet>>::new, CategoryService::consumeTransfer, Map::putAll);
 	}

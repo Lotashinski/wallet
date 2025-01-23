@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: "202501201320"
+      author: lotashinski
+      changes:
+      - sql:
+          sql: |
+              update transfer
+              set currency_сode = w.currency 
+              from wallet w
+              where w.id = wallet_id 
+ 

@@ -33,6 +33,7 @@ public class Category {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.UUID)
+	@Setter(value = AccessLevel.PACKAGE)
 	private UUID id;
 	
 	@Column(name = "title", nullable = false)

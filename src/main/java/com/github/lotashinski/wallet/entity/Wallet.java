@@ -1,15 +1,13 @@
 package com.github.lotashinski.wallet.entity;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import org.hibernate.annotations.Formula;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -34,24 +32,17 @@ public class Wallet {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.UUID)
+	@Setter(value = AccessLevel.PACKAGE)
 	private UUID id;
 	
 	@Column(name = "title", nullable = false)
 	private String title;
 	
-	@Column(name = "currency", nullable = true, length = 5)
-	private String currency;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "wallet")
+	private Set<WalletCurrency> currencies = new HashSet<WalletCurrency>();
 	
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "wallet")
 	private List<Transfer> transfers = new ArrayList<>();
-	
-	@Setter(value = AccessLevel.NONE)
-	@Formula("""
-			(select sum(t.value)
-			from transfer t
-			where t.wallet_id = id)
-			""")
-	private BigDecimal value;
 	
 	@ManyToOne
 	@JoinColumn(name = "creator_id", nullable = false)
@@ -60,8 +51,35 @@ public class Wallet {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "wallet")
 	private Set<CategoryWallet> categoryWallets = new HashSet<>();
 	
+	
+	public void setCurrencyCodes(Collection<String> codes) {
+		Set<String> currentState = new HashSet<>(getCurrencyCodes());
+		
+		Set<String> forPersists = new HashSet<>(codes);
+		forPersists.removeAll(currentState);
+		
+		Set<String> forRemove = new HashSet<>(currentState);
+		forRemove.removeAll(codes);
+		
+		getCurrencies().removeIf(wc -> forRemove.contains(wc.getCode()));
+		
+		getCurrencies().addAll(forPersists
+				.stream()
+				.map(c -> new WalletCurrency(this, c))
+				.toList()
+				);
+	}
+	
+	public List<String> getCurrencyCodes() {
+		return getCurrencies()
+				.stream()
+				.map(WalletCurrency::getCode)
+				.sorted()
+				.toList();
+	}
+	
 	public void addCategoryWallet(CategoryWallet categoryWallet) {
-		var cwSet = getCategoryWallets();
+		Set<CategoryWallet> cwSet = getCategoryWallets();
 		if (cwSet.contains(categoryWallet)) {
 			return;
 		}
@@ -70,7 +88,7 @@ public class Wallet {
 	}
 	
 	public void removeCategoryWallet(CategoryWallet categoryWallet) {
-		var cwSet = getCategoryWallets();
+		Set<CategoryWallet> cwSet = getCategoryWallets();
 		if (! cwSet.contains(categoryWallet)) {
 			return;
 		}
@@ -78,18 +96,12 @@ public class Wallet {
 		cwSet.remove(categoryWallet);
 	}
 	
-	public BigDecimal getValue() {
-		return value == null 
-				? BigDecimal.ZERO 
-				: value;
-	}
-	
 	public void addCategory(Category category) {
 		if (getCategories().contains(category)) {
 			return;
 		}
 		
-		var cw = new CategoryWallet(category, this);
+		CategoryWallet cw = new CategoryWallet(category, this);
 		addCategoryWallet(cw);
 	}
 	
@@ -98,7 +110,7 @@ public class Wallet {
 			return;
 		}
 		
-		var cwSet = getCategoryWallets(); 
+		Set<CategoryWallet> cwSet = getCategoryWallets(); 
 		cwSet.stream()
 			.filter(wc -> wc.getCategory().equals(category))
 			.peek(category::removeCategoryWallet)
@@ -112,7 +124,7 @@ public class Wallet {
 				.collect(Collectors.toSet());
 	}
 	
-
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

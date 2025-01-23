@@ -21,26 +21,47 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			SELECT t
 			FROM Transfer t
 			INNER JOIN t.wallet w
+			LEFT JOIN t.category c
 			WHERE t.id = :id AND w.creator = :creator
 			ORDER BY t.time DESC 
 			""")
 	Optional<Transfer> findByPersonAndId(@Param("creator") Person person, @Param("id") UUID id);
 	
-	List<Transfer> getByWalletOrderByTimeDesc(Wallet wallet);
-
 	@Query("""
-			SELECT t
+			SELECT t, w, c
 			FROM Transfer t
 			INNER JOIN t.wallet w
+			LEFT JOIN t.category c
+			WHERE t.wallet = :wallet
+			ORDER BY t.time DESC
+			""")
+	List<Transfer> getByWalletOrderByTimeDesc(@Param("wallet") Wallet wallet);
+
+	@Query("""
+			SELECT t, w, c
+			FROM Transfer t
+			INNER JOIN t.wallet w
+			LEFT JOIN t.category c
+			WHERE w IN (:wallets)
+			ORDER BY t.time DESC
+			""")
+	List<Transfer> getByWalletOrderByTimeDesc(@Param("wallets") Collection<Wallet> wallets);
+	
+	@Query("""
+			SELECT t, w, c
+			FROM Transfer t
+			INNER JOIN t.wallet w
+			LEFT JOIN t.category c
 			WHERE w.creator = :creator
 			ORDER BY t.time DESC, t.value DESC 
 			""")
 	List<Transfer> getByOrderByTimeDesc(@Param("creator") Person person, Limit limit);
 	
 	@Query("""
-			SELECT t
+			SELECT t, w, c
 			FROM Transfer t
-			INNER JOIN t.category c
+			INNER JOIN t.wallet w
+			LEFT JOIN t.category c
 			WHERE c in (:categories)
 			""")
 	Collection<Transfer> findByCategories(

@@ -19,5 +19,10 @@ spring:
       hiddenmethod:
         filter:
           enabled: true
+
+logging:
+  level:
+    root: info
+          
 server:
     port: ${APP_PORT:8000}

@@ -23,6 +23,20 @@
             <br />
             <br />
             
+            <label for="currency">Currency:</label>
+            <select id="currency" name="currencyCode">
+                <option th:each="curreny : ${ currencies }" 
+                    th:value="${ curreny }"
+                    th:text="${ curreny.toUpperCase() }"
+                    th:selected="${ transfer.currencyCode == currency }" >option</option>
+            </select>
+            
+            <span th:if="${! currencies.contains( transfer.currencyCode )}" 
+                th:text="'! Current currency code (' + ${transfer.currencyCode.toUpperCase()} + ') is not exists in available and will be change after update !'"></span>
+            
+            <br />
+            <br />
+            
             <label for="category">Category:</label>
             <select id="categry" name="categoryId">
                 <option th:each="category : ${categories}" 
@@ -51,6 +65,19 @@
             <input type="submit" class="button" value="Send" />
             <button onclick="history.back()" class="button button-cancel">Cancel</button>
         </form>
+    </section>
+  
+    <section th:if="${transfer.id != null}" class="info-box">
+        
+        <h3 class="info-box__header">Danger zone</h3>
+        <form th:action="'/transfers/' + ${transfer.id}" th:method="delete">
+            <p>
+                Irreversible operation. Operation will be deleted permanently.
+                <span class="underline">You will lose data.</span>
+            </p>
+            <input type="submit" class="button button-cancel" value="Delete operation">
+        </form>
+        
     </section>
   </main>
 

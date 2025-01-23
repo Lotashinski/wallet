@@ -16,15 +16,12 @@ import com.github.lotashinski.wallet.entity.Wallet;
 @org.mapstruct.Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {WalletMapperInterface.class})
 public interface CategoryMapperInterface {
 
-	@Mapping(target = "inWallets", source = "wallets")
-	ItemCategoryDto toDto(Category category, Collection<Wallet> wallets);
+	@Mapping(target = "inWallets")
+	ItemCategoryDto toDto(Category category, Collection<Wallet> inWallets);
 	
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "creator", ignore = true)
-	@Mapping(target = "wallets", ignore = true)
-	@Mapping(target = "categoryWallets", ignore = true)
-	@Mapping(target = "transfers", ignore = true)
-	Category toEntity(ItemCategoryDto dto);
+	@Mapping(target = "inWallets")
+	@Mapping(target = "wallets", source = "wallets")
+	ItemCategoryDto toDto(Category category, Collection<Wallet> inWallets, Collection<Wallet> wallets);
 	
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "creator", ignore = true)

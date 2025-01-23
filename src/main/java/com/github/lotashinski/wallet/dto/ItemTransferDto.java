@@ -15,6 +15,8 @@ public class ItemTransferDto {
 	
 	private BigDecimal value;
 	
+	private String currencyCode;
+	
 	private UUID categoryId;
 	
 	private String categoryTitle;
@@ -22,8 +24,6 @@ public class ItemTransferDto {
 	private UUID walletId;
 	
 	private String walletTitle;
-	
-	private String walletCurrency;
 	
 	private String description;
 	

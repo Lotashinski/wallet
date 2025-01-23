@@ -17,7 +17,6 @@ public interface TransferMapperInterface {
 	@Mapping(target = "categoryTitle", source = "category.title")
 	@Mapping(target = "walletId", source = "wallet.id")
 	@Mapping(target = "walletTitle", source = "wallet.title")
-	@Mapping(target = "walletCurrency", source = "wallet.currency")
 	ItemTransferDto toDto(Transfer transfer);
 	
 	@Mapping(target = "id", ignore = true)

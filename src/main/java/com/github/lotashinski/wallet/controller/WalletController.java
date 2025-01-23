@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.github.lotashinski.wallet.dto.ItemWalletDto;
 import com.github.lotashinski.wallet.dto.SaveWalletDto;
+import com.github.lotashinski.wallet.dto.WalletDto;
 import com.github.lotashinski.wallet.service.WalletServiceInterface;
 
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class WalletController {
 	
 	@GetMapping("/new")
 	public String newWalletPage(Model model) {
-		model.addAttribute("wallet", new ItemWalletDto());
+		model.addAttribute("wallet", new WalletDto());
 		
 		return "wallet_form";
 	}

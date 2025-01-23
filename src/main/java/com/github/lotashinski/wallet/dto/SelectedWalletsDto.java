@@ -13,8 +13,6 @@ public class SelectedWalletsDto {
 	
 	private String walletTitle;
 	
-	private String currency;
-	
 	private boolean selected;
 	
 }

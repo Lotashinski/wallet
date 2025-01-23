@@ -76,7 +76,7 @@
         <tbody>
           <tr th:each="transfer : ${transfers}">
                 <td th:text="${#temporals.format(transfer.time, 'dd MMM yyyy HH:mm')}">...</td>
-                <td th:text="${transfer.value} + ' ' + ${transfer.walletCurrency.toUpperCase()}">...</td>
+                <td th:text="${transfer.value} + ' ' + ${transfer.currencyCode.toUpperCase()}">...</td>
                 <td th:text="${transfer.categoryTitle}">...</td>
                 <td th:text="${transfer.description}">...</td>
                 <td><a th:href="'/transfers?walletId=' + ${transfer.walletId}" th:text="${transfer.walletTitle}">...</a></td>

@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,7 @@ public class Transfer {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.UUID)
+	@Setter(value = AccessLevel.PACKAGE)
 	private UUID id;
 	
 	@ManyToOne
@@ -32,6 +34,9 @@ public class Transfer {
 	
 	@Column(name = "value", nullable = false, precision = 10, scale = 2)
 	private BigDecimal value;
+	
+	@Column(name = "currency_сode", nullable = true, length = 5)
+	private String currencyCode;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category_id")

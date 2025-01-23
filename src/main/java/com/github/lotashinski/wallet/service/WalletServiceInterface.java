@@ -4,15 +4,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import com.github.lotashinski.wallet.dto.ItemWalletDto;
+import com.github.lotashinski.wallet.dto.ItemWalletValuedDto;
 import com.github.lotashinski.wallet.dto.SaveWalletDto;
 import com.github.lotashinski.wallet.dto.SelectedCategoryDto;
 import com.github.lotashinski.wallet.dto.SelectedWalletsDto;
+import com.github.lotashinski.wallet.dto.WalletDto;
 import com.github.lotashinski.wallet.entity.Sum;
 
 public interface WalletServiceInterface {
 	
-	Collection<ItemWalletDto> getAll();
+	Collection<ItemWalletValuedDto> getAll();
 	
 	Collection<Sum> getSumForAllWallets();
 	
@@ -26,11 +27,12 @@ public interface WalletServiceInterface {
 	void setWalletCategories(UUID walletId, Collection<UUID> categoriesIds);
 	
 	
-	ItemWalletDto get(UUID id);
+	WalletDto get(UUID id);
 	
-	ItemWalletDto create(SaveWalletDto dto);
+	WalletDto create(SaveWalletDto dto);
 	
-	ItemWalletDto update(UUID id, SaveWalletDto dto);
+	WalletDto update(UUID id, SaveWalletDto dto);
+	
 	
 	void delete(UUID id);
 	

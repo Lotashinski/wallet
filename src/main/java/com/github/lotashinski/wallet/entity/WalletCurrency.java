@@ -2,6 +2,7 @@ package com.github.lotashinski.wallet.entity;
 
 import java.util.Objects;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -14,29 +15,28 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "category_wallet")
+@Table(name =  "wallet_currency")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryWallet {
-
-	@Id
-	@ManyToOne
-	@JoinColumn(name = "category_id")
-	@Setter(value = AccessLevel.PACKAGE)
-	private Category category;
+public class WalletCurrency {
 	
 	@Id
 	@ManyToOne
-	@JoinColumn(name = "wallet_id")
+	@JoinColumn(name = "wallet_id", nullable = false)
 	@Setter(value = AccessLevel.PACKAGE)
 	private Wallet wallet;
 	
-		
+	@Id
+	@Column(name = "code", nullable = false, length = 5)
+	@Setter(value = AccessLevel.PACKAGE)
+	private String code;
+	
+	
 	@Override
 	public int hashCode() {
-		return Objects.hash(category, wallet);
+		return Objects.hash(code, wallet);
 	}
 
 	@Override
@@ -47,8 +47,8 @@ public class CategoryWallet {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CategoryWallet other = (CategoryWallet) obj;
-		return Objects.equals(category, other.category) && Objects.equals(wallet, other.wallet);
+		WalletCurrency other = (WalletCurrency) obj;
+		return Objects.equals(code, other.code) && Objects.equals(wallet, other.wallet);
 	}
 	
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +27,7 @@ public class Person implements Serializable {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.UUID)
+	@Setter(value = AccessLevel.PACKAGE)
 	private UUID id;
 	
 	@Column(name = "email", unique = true, nullable = false)
@@ -54,5 +56,7 @@ public class Person implements Serializable {
 		Person other = (Person) obj;
 		return Objects.equals(id, other.id);
 	}
+	
+	
 	
 }

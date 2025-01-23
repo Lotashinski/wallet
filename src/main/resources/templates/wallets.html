@@ -38,9 +38,11 @@
           </tr>
         </thead>
         <tbody>
-            <tr th:each="wallet: ${wallets}">
+            <tr th:each="wallet : ${wallets}">
                 <td th:text="${wallet.title}">...</td>
-                <td class="money right" th:text="${wallet.value} + ' ' + ${wallet.currency.toUpperCase}">...</td>
+                <td class="money right">
+                    <div th:each="value : ${wallet.values}" th:text="${value.value} + ' ' + ${value.currency.toUpperCase()}"></div>
+                </td>
                 <td style="display: flex; gap: 1rem;">
                     <a class="button" th:href="'/transfers?walletId=' + ${wallet.id}" href="#">Transfers</a>
                     <a class="button" th:href="'/wallets/' + ${wallet.id}" href="#">Edit</a>

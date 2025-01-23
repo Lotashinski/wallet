@@ -11,6 +11,7 @@ public interface TransfersServiceInterface {
 	Collection<ItemTransferDto> getByWallet(UUID walletId);
 	
 	Collection<ItemTransferDto> getLast();
+
 	
 	ItemTransferDto get(UUID transferId);
 	

@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: "202501192027"
+      author: lotashinski
+      changes:
+      - createTable:
+          tableName: wallet_currency
+          columns: 
+          - column:
+              name: wallet_id
+              type: uuid
+              constraints:
+                  primaryKey: true
+          - column:
+              name: code
+              type: varchar(5)
+              constraints:
+                  primaryKey: true
+      
+      - addColumn: 
+          tableName: transfer
+          columns: 
+          - column:
+              name: currency_сode
+              type: varchar(5)
+      
+      
+      - addForeignKeyConstraint:
+          constraintName: fk_wallet_currency_to_wallet
+          baseTableName: wallet_currency
+          baseColumnNames: wallet_id
+          referencedTableName: wallet
+          referencedColumnNames: id
+          onDelete: CASCADE
+          onUpdate: RESTRICT      

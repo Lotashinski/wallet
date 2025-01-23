@@ -1,21 +1,29 @@
 package com.github.lotashinski.wallet.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.github.lotashinski.wallet.dto.ItemWalletDto;
+import com.github.lotashinski.wallet.dto.ItemWalletValuedDto;
 import com.github.lotashinski.wallet.dto.SaveWalletDto;
 import com.github.lotashinski.wallet.dto.SelectedCategoryDto;
 import com.github.lotashinski.wallet.dto.SelectedWalletsDto;
+import com.github.lotashinski.wallet.dto.WalletDto;
+import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.entity.Sum;
+import com.github.lotashinski.wallet.entity.Transfer;
+import com.github.lotashinski.wallet.entity.Wallet;
 import com.github.lotashinski.wallet.exception.NotFoundHttpException;
 import com.github.lotashinski.wallet.mapper.CategoryMapperInterface;
 import com.github.lotashinski.wallet.mapper.WalletMapperInterface;
 import com.github.lotashinski.wallet.repository.CategoryRepository;
+import com.github.lotashinski.wallet.repository.TransferRepository;
 import com.github.lotashinski.wallet.repository.WalletRepository;
 import com.github.lotashinski.wallet.security.SecurityHolderAdapter;
 import com.github.lotashinski.wallet.service.WalletServiceInterface;
@@ -32,50 +40,65 @@ public class WalletService implements WalletServiceInterface {
 	
 	private final CategoryRepository categoryRepository;
 	
+	private final TransferRepository transferRepository;
+	
 	private final WalletMapperInterface walletMapper;
 	
 	private final CategoryMapperInterface categoryMapper;
 	
 	
 	@Override
-	public Collection<ItemWalletDto> getAll() {
-		var person = SecurityHolderAdapter.getCurrentUser();
+	public Collection<ItemWalletValuedDto> getAll() {
+		Person person = SecurityHolderAdapter.getCurrentUser();
 		
-		return walletRepository.findByPerson(person)
+		log.info("Load wallets for user {}", person.getId());
+		Collection<Wallet> wallets = walletRepository.findByPerson(person);
+		
+		log.debug("Load transfers for wallets", person.getId());
+		Map<UUID, List<Transfer>> transfers = transferRepository
+				.getByWalletOrderByTimeDesc(wallets)
 				.stream()
-				.map(walletMapper::toDto)
+				.collect(Collectors.groupingBy(t -> t.getWallet().getId()));
+		
+		log.debug("Map wallets", person.getId());
+		return wallets
+				.stream()
+				.map(w -> walletMapper.toItemDto(w, calculateSum(transfers.get(w.getId()))))
 				.toList();
 	}
 
 	@Override
-	public ItemWalletDto get(UUID id) {
-		var person = SecurityHolderAdapter.getCurrentUser();
-		
-		return walletRepository
-				.findByPersonAndId(person, id)
-				.map(walletMapper::toDto)
+	public WalletDto get(UUID id) {
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		Wallet wallet = walletRepository.findByPersonAndId(person, id)
 				.orElseThrow(() -> generateNotFoundException(id));
+		Collection<Transfer> transfers = transferRepository.getByWalletOrderByTimeDesc(wallet);
+		
+		return walletMapper.toDto(wallet, calculateSum(transfers));
 	}
 
 	@Override
-	public ItemWalletDto create(SaveWalletDto dto) {
+	public WalletDto create(SaveWalletDto dto) {
 		var wallet = walletMapper.toEntity(dto);
 		wallet.setCreator(SecurityHolderAdapter.getCurrentUser());
 		
 		var entity = walletRepository.save(wallet);
 		
-		return walletMapper.toDto(entity);
+		return walletMapper.toDto(entity, List.of());
 	}
 
 	@Override
-	public ItemWalletDto update(UUID id, SaveWalletDto dto) {
+	public WalletDto update(UUID id, SaveWalletDto dto) {
 		var person = SecurityHolderAdapter.getCurrentUser();
 		
 		return walletRepository
 				.findByPersonAndId(person, id)
 				.map(e -> walletMapper.updateEntity(dto, e))
 				.map(walletRepository::save)
-				.map(walletMapper::toDto)
+				.map(w -> {
+					Collection<Transfer> t = transferRepository.getByWalletOrderByTimeDesc(w);
+					return walletMapper.toDto(w, calculateSum(t));
+				})
 				.orElseThrow(() -> WalletService.generateNotFoundException(id));
 	}
 
@@ -106,7 +129,7 @@ public class WalletService implements WalletServiceInterface {
 		
 		return allWallets
 				.stream()
-				.map(w -> walletMapper.toDto(w, categoryWallets.contains(w)))
+				.map(w -> walletMapper.toSelectedDto(w, categoryWallets.contains(w)))
 				.toList();
 	}
 
@@ -184,6 +207,25 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public Collection<Sum> getSumForAllWallets() {
 		return walletRepository.getSumForPerson(SecurityHolderAdapter.getCurrentUser());
+	}
+	
+	private static Collection<Sum> calculateSum(Collection<Transfer> transfers) {
+		Map<String, List<Transfer>> grouping = transfers
+			.stream()
+			.collect(Collectors.groupingBy(Transfer::getCurrencyCode));
+		
+		return grouping.entrySet()
+				.stream()
+				.map(e -> {
+				     BigDecimal sum = e.getValue()
+				    		 .stream()
+				    		 .map(Transfer::getValue)
+				    		 .reduce((l, r) -> l.add(r))
+				    		 .orElse(BigDecimal.ZERO);
+				     
+				     return new Sum(e.getKey(), sum);
+				})
+				.toList();
 	}
 	
 }

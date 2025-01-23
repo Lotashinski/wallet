@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.github.lotashinski.wallet.entity.Category;
+import com.github.lotashinski.wallet.entity.CategoryWallet;
 import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.entity.Sum;
 import com.github.lotashinski.wallet.entity.Wallet;
@@ -23,15 +24,24 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
 				id IN (:ids)
 				AND w.creator = :creator
 			""")
-	Collection<Wallet> findByPersonAndIds(@Param("creator") Person person, @Param("ids") Collection<UUID> ids);
+	Collection<Wallet> findByPersonAndIds(@Param("creator") Person person, @Param("ids") Collection<? extends UUID> ids);
 	
 	@Query("""
-			SELECT new com.github.lotashinski.wallet.entity.Sum(w.currency, sum(t.value)) 
+			SELECT cw, c, w
+			FROM CategoryWallet cw
+			INNER JOIN cw.wallet w
+			INNER JOIN cw.category c
+			WHERE c in (:categories)
+			""")
+	Collection<CategoryWallet> findByCategories(@Param("categories") Collection<? extends Category> categories);
+	
+	@Query("""
+			SELECT new com.github.lotashinski.wallet.entity.Sum(t.currencyCode, sum(t.value)) 
 			FROM Wallet w
 			INNER JOIN w.transfers t
 			WHERE w.creator = :person
-			GROUP BY currency
-			ORDER BY currency
+			GROUP BY t.currencyCode
+			ORDER BY t.currencyCode
 			""")
 	Collection<Sum> getSumForPerson(@Param("person") Person person);
 	
@@ -55,7 +65,7 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
 			SELECT w
 			FROM Wallet w
 			WHERE 
-				id = :id
+				w.id = :id
 				AND w.creator = :creator
 			""")
 	Optional<Wallet> findByPersonAndId(@Param("creator") Person person, @Param("id") UUID id);

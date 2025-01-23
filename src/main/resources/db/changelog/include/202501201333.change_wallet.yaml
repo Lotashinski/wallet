@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: "202501201333"
+      author: lotashinski
+      changes:
+      - dropColumn:
+          tableName: wallet 
+          columnName: currency

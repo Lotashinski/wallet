@@ -18,13 +18,34 @@
             <br />
             <br />
             
-            <label for="wallet_currency">Currency</label> <br />
+            <label>Currencies:</label><br />
             
-            <select id="currency" name="currency" th:value="${wallet.currency}">
-                <option value="byn" th:selected="(${wallet.currency} == 'byn')">BYN</option>
-                <option value="eur" th:selected="(${wallet.currency} == 'eur')">EUR</option>
-                <option value="usd" th:selected="(${wallet.currency} == 'usd')">USD</option>
-            </select>
+            <input 
+                type="checkbox" 
+                id="cbyn"
+                value="byn" 
+                name="currencyCodes" 
+                th:checked="${ wallet.currencyCodes.contains('byn') }"/>
+            <label for="cbyn">BYN</label>
+            <br />
+            
+            <input 
+                type="checkbox" 
+                id="cusd" 
+                value="usd" 
+                name="currencyCodes"
+                th:checked="${ wallet.currencyCodes.contains('usd') }"/>
+            <label for="cusd">USD</label>
+            <br />
+            
+            <input 
+                type="checkbox" 
+                id="ceur" 
+                value="eur" 
+                name="currencyCodes"
+                th:checked="${ wallet.currencyCodes.contains('eur') }"/>
+            <label for="ceur">EUR</label>
+            <br />
             
             <br />
             <br />
@@ -49,7 +70,7 @@
         </p>
         
         <form method="POST" th:if="${!categories.isEmpty()}" th:action="'/wallets/' + ${wallet.id} + '/categories'">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            
             <div th:each="category : ${categories}">
                 <input type="checkbox" 
                     th:id="${category.categoryId}" 
@@ -62,7 +83,10 @@
             
             <br />
             
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            
             <input type="submit" class="button" value="Set" />
+            
         </form>
     </section>
     

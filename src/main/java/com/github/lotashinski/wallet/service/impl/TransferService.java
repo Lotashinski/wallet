@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.lotashinski.wallet.dto.ItemTransferDto;
 import com.github.lotashinski.wallet.dto.SaveTransferDto;
+import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.exception.NotFoundHttpException;
 import com.github.lotashinski.wallet.mapper.TransferMapperInterface;
 import com.github.lotashinski.wallet.repository.CategoryRepository;
@@ -18,7 +19,9 @@ import com.github.lotashinski.wallet.service.TransfersServiceInterface;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransferService implements TransfersServiceInterface {
@@ -98,9 +101,11 @@ public class TransferService implements TransfersServiceInterface {
 	@Transactional
 	@Override
 	public Collection<ItemTransferDto> getLast() {
-		var person = SecurityHolderAdapter.getCurrentUser();
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		log.info("Load last transactions for person {}", person.getId());
 		
-		return transferRepository.getByOrderByTimeDesc(person, Limit.of(25))
+		return transferRepository
+				.getByOrderByTimeDesc(person, Limit.of(15))
 				.stream()
 				.map(transferMapper::toDto)
 				.toList();

@@ -18,6 +18,7 @@ import com.github.lotashinski.wallet.service.CategoryServiceInterfate;
 import com.github.lotashinski.wallet.service.TransfersServiceInterface;
 import com.github.lotashinski.wallet.service.WalletServiceInterface;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,14 +47,14 @@ public class TransferController {
 	@GetMapping("/new")
 	public String createPage(@RequestParam UUID walletId, Model model) {
 		model.addAttribute("transfer", new ItemTransferDto());
-		model.addAttribute("wallet", walletService.get(walletId));
 		model.addAttribute("categories", categoryService.getWalletCategories(walletId));
+		model.addAttribute("currencies", walletService.get(walletId).getCurrencyCodes());
 		
 		return "transfer_form";
 	}
 	
 	@PostMapping("/new")
-	public String create(@RequestParam UUID walletId, SaveTransferDto transfer) {
+	public String create(@RequestParam UUID walletId, @Valid SaveTransferDto transfer) {
 		transferService.create(walletId, transfer);
 		
 		return "redirect:/transfers?walletId=" + walletId;
@@ -61,17 +62,19 @@ public class TransferController {
 
 	@GetMapping("/{id}")
 	public String editPage(@PathVariable("id") UUID transferId, Model model) {
-		var transfer = transferService.get(transferId);
+		ItemTransferDto transfer = transferService.get(transferId);
+		
 		model.addAttribute("transfer", transfer);
-		model.addAttribute("wallet", walletService.get(transfer.getWalletId()));
 		model.addAttribute("categories", categoryService.getWalletCategories(transfer.getWalletId()));
+		model.addAttribute("currencies", walletService.get(transfer.getWalletId()).getCurrencyCodes());
 		
 		return "transfer_form";
 	}
 	
 	@RequestMapping(path = "/{id}", method = {RequestMethod.PUT, RequestMethod.POST})
-	public String edit(@PathVariable("id") UUID transferId, SaveTransferDto transfer) {
-		var dto = transferService.update(transferId, transfer);
+	public String edit(@PathVariable("id") UUID transferId, @Valid SaveTransferDto transfer) {
+		ItemTransferDto dto = transferService.update(transferId, transfer);
+		
 		return "redirect:/transfers?walletId=" + dto.getWalletId();
 	}
 	

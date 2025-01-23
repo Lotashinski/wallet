@@ -1,6 +1,6 @@
 package com.github.lotashinski.wallet.dto;
 
-import java.math.BigDecimal;
+import java.util.Collection;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,6 @@ public class SaveWalletDto {
 
 	private String title;
 	
-	private String currency;
+	private Collection<String> currencyCodes;
 	
-	private BigDecimal value;
 }
