@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.lotashinski.wallet.dto.ChangePasswordDto;
 import com.github.lotashinski.wallet.dto.PersonDto;
+import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.exception.InvalidPasswordException;
 import com.github.lotashinski.wallet.mapper.PersonMapperInterface;
 import com.github.lotashinski.wallet.repository.PersonRepository;
@@ -27,7 +28,7 @@ public class ProfileService implements ProfileServiceInterface {
 	
 	@Override
 	public PersonDto getCurrent() {
-		var person = SecurityHolderAdapter.getCurrentUser();
+		Person person = SecurityHolderAdapter.getCurrentUser();
 		
 		return personMapper.toDto(person);
 	}
@@ -35,8 +36,8 @@ public class ProfileService implements ProfileServiceInterface {
 
 	@Override
 	public void changePassword(ChangePasswordDto changePassword) throws InvalidPasswordException {
-		var person = SecurityHolderAdapter.getCurrentUser();
-		var currentPassword = person.getPassword();
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		String currentPassword = person.getPassword();
 		
 		if (! encoder.matches(changePassword.getCurrentPassword(), currentPassword)) {
 			throw new InvalidPasswordException();

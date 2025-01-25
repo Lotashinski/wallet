@@ -18,6 +18,7 @@ public abstract class WalletMapperDecorator implements WalletMapperInterface {
 	@Qualifier("delegate")
 	private WalletMapperInterface delegate;
 
+	
 	@Override
 	public Wallet toEntity(SaveWalletDto dto) {
 		Wallet wallet = delegate.toEntity(dto);

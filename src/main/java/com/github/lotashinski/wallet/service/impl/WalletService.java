@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import com.github.lotashinski.wallet.dto.SaveWalletDto;
 import com.github.lotashinski.wallet.dto.SelectedCategoryDto;
 import com.github.lotashinski.wallet.dto.SelectedWalletsDto;
 import com.github.lotashinski.wallet.dto.WalletDto;
+import com.github.lotashinski.wallet.entity.Category;
 import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.entity.Sum;
 import com.github.lotashinski.wallet.entity.Transfer;
@@ -51,11 +53,11 @@ public class WalletService implements WalletServiceInterface {
 	public Collection<ItemWalletValuedDto> getAll() {
 		Person person = SecurityHolderAdapter.getCurrentUser();
 		
-		log.info("Load wallets for user {}", person.getId());
+		log.info("Get wallets. User {}", person.getId());
 		Collection<Wallet> wallets = walletRepository.findByPerson(person);
 		
 		log.debug("Load transfers for wallets", person.getId());
-		Map<UUID, List<Transfer>> transfers = transferRepository
+		Map<UUID, ? extends Collection<? extends Transfer>> transfers = transferRepository
 				.getByWalletOrderByTimeDesc(wallets)
 				.stream()
 				.collect(Collectors.groupingBy(t -> t.getWallet().getId()));
@@ -63,16 +65,21 @@ public class WalletService implements WalletServiceInterface {
 		log.debug("Map wallets", person.getId());
 		return wallets
 				.stream()
-				.map(w -> walletMapper.toItemDto(w, calculateSum(transfers.get(w.getId()))))
+				.map(w -> 	
+					walletMapper.toItemDto(w, calculateSum(transfers.get(w.getId())))					
+				)
 				.toList();
 	}
 
 	@Override
 	public WalletDto get(UUID id) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		log.info("Get wallet {}. User {}", id, person.getId());
 		Wallet wallet = walletRepository.findByPersonAndId(person, id)
 				.orElseThrow(() -> generateNotFoundException(id));
-		Collection<Transfer> transfers = transferRepository
+		
+		Collection<? extends Transfer> transfers = transferRepository
 				.getByWalletOrderByTimeDesc(wallet);
 		
 		return walletMapper.toDto(wallet, calculateSum(transfers));
@@ -80,24 +87,27 @@ public class WalletService implements WalletServiceInterface {
 
 	@Override
 	public WalletDto create(SaveWalletDto dto) {
-		var wallet = walletMapper.toEntity(dto);
-		wallet.setCreator(SecurityHolderAdapter.getCurrentUser());
+		Person person = SecurityHolderAdapter.getCurrentUser();
 		
-		var entity = walletRepository.save(wallet);
+		log.info("Create wallet {}. User {}", dto, person.getId());
+		Wallet wallet = walletMapper.toEntity(dto, person);
+		Wallet entity = walletRepository.save(wallet);
 		
 		return walletMapper.toDto(entity, List.of());
 	}
 
 	@Override
 	public WalletDto update(UUID id, SaveWalletDto dto) {
-		var person = SecurityHolderAdapter.getCurrentUser();
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		log.info("Update wallet {}, set {}. User {}", id, dto, person.getId());
 		
 		return walletRepository
 				.findByPersonAndId(person, id)
 				.map(e -> walletMapper.updateEntity(dto, e))
 				.map(walletRepository::save)
 				.map(w -> {
-					Collection<Transfer> t = transferRepository
+					Collection<? extends Transfer> t = transferRepository
 							.getByWalletOrderByTimeDesc(w);
 					
 					return walletMapper.toDto(w, calculateSum(t));
@@ -107,28 +117,27 @@ public class WalletService implements WalletServiceInterface {
 
 	@Override
 	public void delete(UUID id) {
-		var person = SecurityHolderAdapter.getCurrentUser();
+		Person person = SecurityHolderAdapter.getCurrentUser();
 		
-		var entity = walletRepository
+		log.info("Delete wallet {}. User {}", id, person.getId());
+		Wallet entity = walletRepository
 				.findByPersonAndId(person, id)
 				.orElseThrow(() -> generateNotFoundException(id));
 		
 		walletRepository.delete(entity);
 	}
-	
-	private static RuntimeException generateNotFoundException(UUID id) {
-		return new NotFoundHttpException(String.format("Wallet %s not found.", id.toString()));
-	}
 
 	@Override
 	public List<SelectedWalletsDto> getCategoryWallets(UUID categoryid) {
-		var person = SecurityHolderAdapter.getCurrentUser();
-		var category = categoryRepository
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		log.info("Get category {} wallets. User {}", categoryid, person.getId());
+		Category category = categoryRepository
 				.findByPersonAndId(person, categoryid)
 				.orElseThrow(() -> categoryNotFoundException(categoryid));
 		
-		var allWallets = walletRepository.findByPerson(person);
-		var categoryWallets = new HashSet<>(walletRepository.findByPersonAndCategory(person, category));
+		Collection<? extends Wallet> allWallets = walletRepository.findByPerson(person);
+		Collection<? extends Wallet> categoryWallets = new HashSet<>(walletRepository.findByPersonAndCategory(person, category));
 		
 		return allWallets
 				.stream()
@@ -138,19 +147,20 @@ public class WalletService implements WalletServiceInterface {
 
 	@Override
 	public void setCategoryWallets(UUID categoryId, Collection<UUID> walletsIds) {
-		var person = SecurityHolderAdapter.getCurrentUser();
+		Person person = SecurityHolderAdapter.getCurrentUser();
 	
-		var category = categoryRepository.findByPersonAndId(person, categoryId)
+		log.info("Set category {} wallets. User {}", categoryId, person.getId());
+		Category category = categoryRepository.findByPersonAndId(person, categoryId)
 				.orElseThrow(() -> categoryNotFoundException(categoryId));
 		
-		var newState = walletRepository.findByPersonAndIds(person, walletsIds);
-		var oldState = category.getWallets();
+		Collection<? extends Wallet> newState = walletRepository.findByPersonAndIds(person, walletsIds);
+		Collection<? extends Wallet> oldState = category.getWallets();
 	
 	
-		var forPersists = new HashSet<>(newState);
+		Set<Wallet> forPersists = new HashSet<>(newState);
 		forPersists.removeAll(oldState);
 		
-		var forDelete = new HashSet<>(oldState);
+		Set<Wallet> forDelete = new HashSet<>(oldState);
 		forDelete.removeAll(newState);
 		
 		forDelete.stream()
@@ -162,19 +172,18 @@ public class WalletService implements WalletServiceInterface {
 		categoryRepository.save(category);
 	}
 	
-	private static RuntimeException categoryNotFoundException(UUID categoryId) {
-		return new NotFoundHttpException(String.format("Category %s not found", categoryId));
-	}
 
 	@Override
 	public List<SelectedCategoryDto> getWalletCategories(UUID walletId) {
-		var person = SecurityHolderAdapter.getCurrentUser();
-		var entity = walletRepository
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		log.info("Get wallet {} categories. User {}", walletId, person.getId());
+		Wallet entity = walletRepository
 				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> generateNotFoundException(walletId));
 		
-		var allCategories = categoryRepository.findByPerson(person);
-		var walletCategories = new HashSet<>(categoryRepository.findByPersonAndWallet(person, entity));
+		Collection<? extends Category> allCategories = categoryRepository.findByPerson(person);
+		Collection<? extends Category> walletCategories = new HashSet<>(categoryRepository.findByPersonAndWallet(person, entity));
 		
 		return allCategories
 				.stream()
@@ -184,18 +193,20 @@ public class WalletService implements WalletServiceInterface {
 
 	@Override
 	public void setWalletCategories(UUID walletId, Collection<UUID> categoriesIds) {
-		var person = SecurityHolderAdapter.getCurrentUser();
-		var entity = walletRepository
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		log.info("Set wallet {} categories. User {}", walletId, person.getId());
+		Wallet entity = walletRepository
 				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> generateNotFoundException(walletId));
 		
-		var oldState = categoryRepository.findByPersonAndWallet(person, entity);
-		var newState = categoryRepository.findByPersonAndIds(person, categoriesIds);
+		Collection<? extends Category> oldState = categoryRepository.findByPersonAndWallet(person, entity);
+		Collection<? extends Category> newState = categoryRepository.findByPersonAndIds(person, categoriesIds);
 		
-		var forPersists = new HashSet<>(newState);
+		Set<Category> forPersists = new HashSet<>(newState);
 		forPersists.removeAll(oldState);
 		
-		var forDelete = new HashSet<>(oldState);
+		Set<Category> forDelete = new HashSet<>(oldState);
 		forDelete.removeAll(newState);
 		
 		forDelete.stream()
@@ -212,7 +223,7 @@ public class WalletService implements WalletServiceInterface {
 		return walletRepository.getSumForPerson(SecurityHolderAdapter.getCurrentUser());
 	}
 	
-	private static Collection<Sum> calculateSum(Collection<Transfer> transfers) {
+	private static Collection<? extends Sum> calculateSum(Collection<? extends Transfer> transfers) {
 		Map<String, List<Transfer>> grouping = transfers
 			.stream()
 			.collect(Collectors.groupingBy(Transfer::getCurrencyCode));
@@ -229,6 +240,16 @@ public class WalletService implements WalletServiceInterface {
 				     return new Sum(e.getKey(), sum);
 				})
 				.toList();
+	}
+	
+
+	private static RuntimeException categoryNotFoundException(UUID categoryId) {
+		return new NotFoundHttpException(String.format("Category %s not found", categoryId));
+	}
+
+	
+	private static RuntimeException generateNotFoundException(UUID id) {
+		return new NotFoundHttpException(String.format("Wallet %s not found.", id.toString()));
 	}
 	
 }

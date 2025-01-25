@@ -9,6 +9,6 @@ import com.github.lotashinski.wallet.entity.Person;
 
 public interface PersonRepository extends JpaRepository<Person, UUID> {
 
-	Optional<Person> findOneByEmail(String email);
+	Optional<? extends Person> findOneByEmail(String email);
 	
 }

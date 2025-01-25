@@ -10,6 +10,7 @@ import com.github.lotashinski.wallet.dto.ItemCategoryDto;
 import com.github.lotashinski.wallet.dto.SaveCategoryDto;
 import com.github.lotashinski.wallet.dto.SelectedCategoryDto;
 import com.github.lotashinski.wallet.entity.Category;
+import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.entity.Wallet;
 
 
@@ -29,6 +30,12 @@ public interface CategoryMapperInterface {
 	@Mapping(target = "categoryWallets", ignore = true)
 	@Mapping(target = "transfers", ignore = true)
 	Category toEntity(SaveCategoryDto dto);
+	
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "wallets", ignore = true)
+	@Mapping(target = "categoryWallets", ignore = true)
+	@Mapping(target = "transfers", ignore = true)
+	Category toEntity(SaveCategoryDto dto, Person creator);
 	
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "creator", ignore = true)

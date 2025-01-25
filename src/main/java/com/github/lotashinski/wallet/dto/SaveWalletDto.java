@@ -2,11 +2,9 @@ package com.github.lotashinski.wallet.dto;
 
 import java.util.Collection;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class SaveWalletDto {
 
 	private String title;

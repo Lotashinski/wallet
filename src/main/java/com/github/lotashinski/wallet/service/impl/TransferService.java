@@ -16,7 +16,6 @@ import com.github.lotashinski.wallet.entity.Transfer;
 import com.github.lotashinski.wallet.entity.Wallet;
 import com.github.lotashinski.wallet.exception.NotFoundHttpException;
 import com.github.lotashinski.wallet.mapper.TransferMapperInterface;
-import com.github.lotashinski.wallet.repository.CategoryRepository;
 import com.github.lotashinski.wallet.repository.TransferRepository;
 import com.github.lotashinski.wallet.repository.WalletRepository;
 import com.github.lotashinski.wallet.security.SecurityHolderAdapter;
@@ -36,23 +35,17 @@ public class TransferService implements TransfersServiceInterface {
 	private final WalletRepository walletRepository;
 	
 	private final TransferMapperInterface transferMapper;
-	
-	private final CategoryRepository categoryRepository;
 
 	
 	@Override
 	public ItemTransferDto create(UUID wallUuid, SaveTransferDto dto) {
-		var entity = transferMapper.toEntity(dto);
-		var person = SecurityHolderAdapter.getCurrentUser();
-		var wallet = walletRepository.findByPersonAndId(person, wallUuid)
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		Transfer entity = transferMapper.toEntity(dto);
+		
+		log.info("Create new transfer in wallet {} {}. User {}", wallUuid, dto, person.getId());
+		Wallet wallet = walletRepository.findByPersonAndId(person, wallUuid)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %s not found", wallUuid)));
 		entity.setWallet(wallet);
-		
-		if (dto.getCategoryId() != null) {
-			var category = categoryRepository.findById(dto.getCategoryId())
-					.orElseThrow(() -> new NotFoundHttpException(String.format("Category %s not found", dto.getCategoryId())));
-			entity.setCategory(category);
-		}
 		
 		transferRepository.save(entity);
 		
@@ -62,9 +55,11 @@ public class TransferService implements TransfersServiceInterface {
 	@Transactional
 	@Override
 	public ItemTransferDto update(UUID transferId, SaveTransferDto dto) {
-		log.info("Update transfer {}", transferId);
-		log.debug("TransferId {}, saved data {}", transferId, dto);
 		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		log.info("Update transfer {}. User {}", transferId, person.getId());
+		log.debug("TransferId {}, saved data {}", transferId, dto);
+		
 		Transfer entity = transferRepository.findByPersonAndId(person, transferId)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %s not found", transferId)));
 		
@@ -76,8 +71,13 @@ public class TransferService implements TransfersServiceInterface {
 
 	@Override
 	public void delete(UUID transferId) {
-		var entity = transferRepository.findById(transferId)
-				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %s not found", transferId)));
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		log.info("Delete transfer {}. User {}", transferId, person.getId());
+		
+		Transfer entity = transferRepository
+				.findByPersonAndId(person, transferId)
+				.orElseThrow(() -> new NotFoundHttpException(String.format("Transfer %s not found", transferId)));
 		
 		transferRepository.delete(entity);
 	}
@@ -85,14 +85,14 @@ public class TransferService implements TransfersServiceInterface {
 	@Transactional
 	@Override
 	public Page<? extends ItemTransferDto> getByWallet(UUID walletId, int pageNumber) {
-		log.info("Get transfers for wallet {}", walletId);
 		Person person = SecurityHolderAdapter.getCurrentUser();
 		
-		log.info("Load wallet {} for person {}", walletId, person.getId());
-		Wallet wallet = walletRepository.findByPersonAndId(person, walletId)
+		log.info("Get wallet {} transfers. User {}", walletId, person.getId());
+		Wallet wallet = walletRepository
+				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %w not found", walletId)));
 		
-		log.info("Load transfers for wallet {}", walletId);
+		log.debug("Load transfers for wallet {}", walletId);
 		Pageable pageable = PageRequest.of(pageNumber, 15);
 		Page<? extends Transfer> page = transferRepository
 				.getByWalletOrderByTimeDesc(wallet, pageable);
@@ -102,8 +102,12 @@ public class TransferService implements TransfersServiceInterface {
 
 	@Override
 	public ItemTransferDto get(UUID transferId) {
+		Person person = SecurityHolderAdapter.getCurrentUser();
 		
-		return transferRepository.findById(transferId)
+		log.info("Get transfer {}. User {}", transferId, person.getId());
+		
+		return transferRepository
+				.findByPersonAndId(person, transferId)
 				.map(transferMapper::toDto)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Transfer %s not found", transferId)));
 	}
@@ -112,7 +116,7 @@ public class TransferService implements TransfersServiceInterface {
 	@Override
 	public Collection<? extends ItemTransferDto> getLast() {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		log.info("Load last transactions for person {}", person.getId());
+		log.info("Load last transactions. User {}", person.getId());
 		
 		return transferRepository
 				.getByOrderByTimeDesc(person, Limit.of(15))

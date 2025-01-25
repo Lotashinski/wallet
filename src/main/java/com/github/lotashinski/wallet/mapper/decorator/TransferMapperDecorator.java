@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.github.lotashinski.wallet.dto.ItemTransferDto;
 import com.github.lotashinski.wallet.dto.SaveTransferDto;
+import com.github.lotashinski.wallet.entity.Category;
 import com.github.lotashinski.wallet.entity.Transfer;
+import com.github.lotashinski.wallet.exception.NotFoundHttpException;
 import com.github.lotashinski.wallet.mapper.TransferMapperInterface;
 import com.github.lotashinski.wallet.repository.CategoryRepository;
 import com.github.lotashinski.wallet.security.SecurityHolderAdapter;
@@ -49,9 +51,10 @@ public abstract class TransferMapperDecorator implements TransferMapperInterface
 	
 	private Transfer setCategory(Transfer transfer, UUID categgoryId) {
 		if (categgoryId != null) {
-			categoryRepository
+			Category category = categoryRepository
 				.findByPersonAndId(SecurityHolderAdapter.getCurrentUser(), categgoryId)
-				.ifPresent(transfer::setCategory);
+				.orElseThrow(() -> new NotFoundHttpException(String.format("Categgory %s not found", categgoryId)));
+			transfer.setCategory(category);
 		} else {
 			transfer.setCategory(null);
 		}

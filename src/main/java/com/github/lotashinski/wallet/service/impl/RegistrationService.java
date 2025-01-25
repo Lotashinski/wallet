@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.github.lotashinski.wallet.dto.RegistrationDto;
+import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.exception.UsernameAlreadyExistsException;
 import com.github.lotashinski.wallet.mapper.RegistrationMapperInterface;
 import com.github.lotashinski.wallet.repository.PersonRepository;
@@ -28,13 +29,14 @@ public class RegistrationService implements RegistrationServiceInterface {
 	
 	@Override
 	public void registration(RegistrationDto dto) {
-		var email = dto.getEmail().toLowerCase();
+		String email = dto.getEmail().toLowerCase();
 		if(personRepository.findOneByEmail(email).isPresent()) {
 			var text = String.format("Email \"%s\" already exists.", email);
 			throw new UsernameAlreadyExistsException(text);
 		}
 		
-		var person = registrationMapper.toEntity(dto);
+		Person person = registrationMapper.toEntity(dto);
+		
 		person.setCreatedAt(LocalDateTime.now());
 		person.setPassword(encoder.encode(dto.getPassword()));
 		

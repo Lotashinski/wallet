@@ -27,7 +27,7 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			WHERE t.id = :id AND w.creator = :creator
 			ORDER BY t.time DESC 
 			""")
-	Optional<Transfer> findByPersonAndId(@Param("creator") Person person, @Param("id") UUID id);
+	Optional<? extends Transfer> findByPersonAndId(@Param("creator") Person person, @Param("id") UUID id);
 	
 	@Query("""
 			SELECT t, w, c
@@ -37,7 +37,7 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			WHERE t.wallet = :wallet
 			ORDER BY t.time DESC
 			""")
-	Collection<Transfer> getByWalletOrderByTimeDesc(@Param("wallet") Wallet wallet);
+	Collection<? extends Transfer> getByWalletOrderByTimeDesc(@Param("wallet") Wallet wallet);
 
 	Page<? extends Transfer> getByWalletOrderByTimeDesc(Wallet wallet, Pageable pageable);
 	
@@ -49,7 +49,7 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			WHERE w IN (:wallets)
 			ORDER BY t.time DESC
 			""")
-	List<Transfer> getByWalletOrderByTimeDesc(@Param("wallets") Collection<Wallet> wallets);
+	List<? extends Transfer> getByWalletOrderByTimeDesc(@Param("wallets") Collection<Wallet> wallets);
 	
 	@Query("""
 			SELECT t, w, c
@@ -59,7 +59,7 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			WHERE w.creator = :creator
 			ORDER BY t.time DESC, t.value DESC 
 			""")
-	List<Transfer> getByOrderByTimeDesc(@Param("creator") Person person, Limit limit);
+	List<? extends Transfer> getByOrderByTimeDesc(@Param("creator") Person person, Limit limit);
 	
 	@Query("""
 			SELECT t, w, c
@@ -68,7 +68,6 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			LEFT JOIN t.category c
 			WHERE c in (:categories)
 			""")
-	Collection<Transfer> findByCategories(
-			@Param("categories") Collection<? extends Category> categories);
+	Collection<? extends Transfer> findByCategories(@Param("categories") Collection<? extends Category> categories);
 	
 }

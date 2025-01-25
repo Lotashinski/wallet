@@ -47,10 +47,9 @@ public class CategoryService implements CategoryServiceInterfate {
 	
 	@Override
 	public ItemCategoryDto get(UUID id) {
-		log.info("Get category {}", id);
-		
 		Person person = SecurityHolderAdapter.getCurrentUser();
 		
+		log.info("Get category {}. User {}", id, person.getId());
 		return categoryRepository
 				.findByPersonAndId(person, id)
 				.map(c -> transferCategoryMapper.toDto(c, findByCategoryInTransfers(c)))
@@ -60,11 +59,11 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Transactional
 	@Override
 	public ItemCategoryDto create(SaveCategoryDto dto) {
-		log.info("Create category {}", dto);
+		Person person = SecurityHolderAdapter.getCurrentUser();
 		
-		Category entity = transferCategoryMapper.toEntity(dto);
-	
-		entity.setCreator(SecurityHolderAdapter.getCurrentUser());
+		log.info("Create category {}. User {}", dto, person.getId());
+		Category entity = transferCategoryMapper.toEntity(dto, person);
+
 		categoryRepository.save(entity);
 
 		return transferCategoryMapper.toDto(entity, List.of());
@@ -73,9 +72,8 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Transactional
 	@Override
 	public ItemCategoryDto update(UUID id, SaveCategoryDto category) {
-		log.info("Update category {} {}", id, category);
-		
 		Person person = SecurityHolderAdapter.getCurrentUser();
+		log.info("Update category {} {}. User {}", id, category, person.getId());
 		
 		return categoryRepository
 				.findByPersonAndId(person, id)
@@ -88,9 +86,9 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Transactional
 	@Override
 	public void delete(UUID id) {
-		log.info("Delete category {}", id);
-		
 		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		log.info("Delete category {}. User {}", id, person.getId());
 		
 		Category entity = categoryRepository
 				.findByPersonAndId(person, id)
@@ -104,11 +102,10 @@ public class CategoryService implements CategoryServiceInterfate {
 
 	@Override
 	public List<ItemCategoryDto> getAll() {
-		log.info("Get personal categories");
-		
 		Person person = SecurityHolderAdapter.getCurrentUser();
 		
-		Collection<Category> categories = categoryRepository
+		log.info("Get categories. User {}", person.getId());
+		Collection<? extends Category> categories = categoryRepository
 				.findByPerson(person);
 		Map<Category, ? extends Collection<Wallet>> useWalletMap = findByCategoriesInTransfers(categories);
 		Map<Category, ? extends Collection<Wallet>> linkWalletMap = findByLinkedCategories(categories);
@@ -121,14 +118,14 @@ public class CategoryService implements CategoryServiceInterfate {
 	
 	@Override
 	public List<ItemCategoryDto> getWalletCategories(UUID walletId) {
-		log.info("Get wallet {} categories", walletId);
-		
 		Person person = SecurityHolderAdapter.getCurrentUser();
+		
+		log.info("Get wallet {} categories. User {}", walletId, person.getId());
 		Wallet wallet = walletRepository
 				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %s not found", walletId)));
 		
-		Collection<Category> categories = categoryRepository
+		Collection<? extends Category> categories = categoryRepository
 				.findByPersonAndWallet(person, wallet);
 		Map<Category, ? extends Collection<Wallet>> walletMap = findByCategoriesInTransfers(categories);
 		
@@ -168,8 +165,8 @@ public class CategoryService implements CategoryServiceInterfate {
 	private static Map<Category, Set<Wallet>> consumeTransfer(
 			Map<Category, Set<Wallet>> map, Transfer t) {
 		
-		var category = t.getCategory();
-		var set = map.get(category);
+		Category category = t.getCategory();
+		Set<Wallet> set = map.get(category);
 		
 		if (set == null) {
 			set = new HashSet<Wallet>();

@@ -21,7 +21,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 			WHERE :id = tc.id
 				AND :creator = tc.creator
 			""")
-	Optional<Category> findByPersonAndId(@Param("creator")  Person person, @Param("id") UUID id);
+	Optional<? extends Category> findByPersonAndId(@Param("creator")  Person person, @Param("id") UUID id);
 	
 	@Query(value = """
 			SELECT c
@@ -30,7 +30,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 				AND :creator = c.creator
 			ORDER BY lower(c.title)
 			""")
-	List<Category> findByPersonAndIds(@Param("creator")  Person person, @Param("ids") Collection<UUID> ids);
+	List<? extends Category> findByPersonAndIds(@Param("creator")  Person person, @Param("ids") Collection<UUID> ids);
 	
 	@Query(value = """
 			SELECT c
@@ -38,7 +38,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 			WHERE c.creator = :creator
 			ORDER BY lower(c.title)
 			""")
-	List<Category> findByPerson(@Param("creator") Person person);
+	List<? extends Category> findByPerson(@Param("creator") Person person);
 	
 	@Query(value = """
 			SELECT c
@@ -53,6 +53,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 				)
 			ORDER BY lower(c.title)
 			""")
-	List<Category> findByPersonAndWallet(@Param("creator") Person person, @Param("wallet") Wallet wallet);
+	List<? extends Category> findByPersonAndWallet(@Param("creator") Person person, @Param("wallet") Wallet wallet);
 	
 }
