@@ -72,7 +72,8 @@ public class WalletService implements WalletServiceInterface {
 		Person person = SecurityHolderAdapter.getCurrentUser();
 		Wallet wallet = walletRepository.findByPersonAndId(person, id)
 				.orElseThrow(() -> generateNotFoundException(id));
-		Collection<Transfer> transfers = transferRepository.getByWalletOrderByTimeDesc(wallet);
+		Collection<Transfer> transfers = transferRepository
+				.getByWalletOrderByTimeDesc(wallet);
 		
 		return walletMapper.toDto(wallet, calculateSum(transfers));
 	}
@@ -96,7 +97,9 @@ public class WalletService implements WalletServiceInterface {
 				.map(e -> walletMapper.updateEntity(dto, e))
 				.map(walletRepository::save)
 				.map(w -> {
-					Collection<Transfer> t = transferRepository.getByWalletOrderByTimeDesc(w);
+					Collection<Transfer> t = transferRepository
+							.getByWalletOrderByTimeDesc(w);
+					
 					return walletMapper.toDto(w, calculateSum(t));
 				})
 				.orElseThrow(() -> WalletService.generateNotFoundException(id));

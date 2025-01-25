@@ -10,7 +10,12 @@
     <section class="card content">
        
         <h3 th:text="'Wallet: ' + ${wallet.title}">TITLE</h3>
-        <div th:each="value : ${wallet.values}" th:text="${value.value} + ' ' + ${value.currency.toUpperCase()}"></div>
+        <table>
+            <tr th:each="value : ${wallet.values}" class="money">
+                <td th:text="${value.currency.toUpperCase()}"></td>
+                <td th:text="${value.value}" class="right"></td>
+            </tr>
+        </table>
     
         <a th:href="'/transfers/new?walletId=' + ${wallet.id}" class="button">Create new transfer</a>
         
@@ -26,7 +31,7 @@
         </thead>
         <tbody>
             <tr th:each="transfer : ${transfers}">
-                <td th:text="${#temporals.format(transfer.time, 'dd.MM.yyyy HH:mm')}">...</td>
+                <td th:text="${#temporals.format(transfer.time, 'dd MMM yyyy HH:mm')}">...</td>
                 <td class="money right" th:text="${transfer.value} + ' ' + ${transfer.currencyCode.toUpperCase()}">...</td>
                 <td th:text="${transfer.categoryTitle}">...</td>
                 <td th:text="${transfer.description}">...</td>
@@ -37,6 +42,45 @@
             </tr>
         </tbody>
       </table>
+      
+      <div th:if="${transfers.totalPages > 1}" th:with="deltaPage = ${transfers.totalPages} - ${pageNumber}">
+      
+        <a th:if="${pageNumber} > 3"
+            th:href="@{/transfers(walletId=${param.walletId}, pageNumber=1)}"
+            th:text="'1'">FIRST</a>
+        
+        <span th:if="${pageNumber} > 4">...</span>
+        
+        <a 
+            th:if="${pageNumber} > 2"
+            th:href="@{/transfers(walletId=${param.walletId}, pageNumber=${pageNumber} - 2)}"
+            th:text="${pageNumber} - 2">C - 2</a>
+        <a 
+            th:if="${pageNumber} > 1"
+            th:href="@{/transfers(walletId=${param.walletId}, pageNumber=${pageNumber} - 1)}"
+            th:text="${pageNumber} - 1">C - 1</a>
+        
+        <span th:text="${pageNumber}">CURRENT</span>
+        
+        <a 
+            th:if="${deltaPage} > 0"
+            th:href="@{/transfers(walletId=${param.walletId}, pageNumber=${pageNumber} + 1)}"
+            th:text="${pageNumber} + 1">C + 1</a>
+            
+        <a 
+            th:if="${deltaPage} > 1"
+            th:href="@{/transfers(walletId=${param.walletId}, pageNumber=${pageNumber} + 2)}"
+            th:text="${pageNumber} + 2">C + 2</a>
+        
+        <span th:if="${deltaPage} > 3">...</span>
+        
+        <a 
+            th:if="${deltaPage} > 2"
+            th:href="@{/transfers(walletId=${param.walletId}, pageNumber=${transfers.totalPages})}"
+            th:text="${transfers.totalPages}">LAST</a>
+            
+      </div>
+      
     </section>
   </main>
 

@@ -5,10 +5,11 @@ import org.springframework.http.HttpStatus;
 
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class NotFoundHttpException extends RuntimeException {
+public class NotFoundHttpException extends HttpBadRequestException {
 
 	private static final long serialVersionUID = 1L;
 
+	
 	public NotFoundHttpException() {
 		super();
 	}

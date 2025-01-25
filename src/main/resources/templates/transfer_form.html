@@ -31,8 +31,8 @@
                     th:selected="${ transfer.currencyCode == currency }" >option</option>
             </select>
             
-            <span th:if="${! currencies.contains( transfer.currencyCode )}" 
-                th:text="'! Current currency code (' + ${transfer.currencyCode.toUpperCase()} + ') is not exists in available and will be change after update !'"></span>
+            <span th:if="${transfer.id != null && ! currencies.contains( transfer.currencyCode )}" 
+                th:text="'! Current currency code (' + ${transfer.currencyCode} + ') is not exists in available and will be change after update !'"></span>
             
             <br />
             <br />

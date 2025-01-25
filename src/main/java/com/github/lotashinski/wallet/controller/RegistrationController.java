@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.github.lotashinski.wallet.dto.RegistrationDto;
+import com.github.lotashinski.wallet.exception.HttpBadRequestException;
 import com.github.lotashinski.wallet.service.RegistrationServiceInterface;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ public class RegistrationController {
 	@PostMapping("/registration") 
 	public String registration(RegistrationDto dto) {
 		try {
-		 registrationService.registration(dto);
-		} catch (RuntimeException e) {
+			registrationService.registration(dto);
+		} catch (HttpBadRequestException e) {
 			return "redirect:/registration?error&errorText=" + e.getMessage();
 		}
 		

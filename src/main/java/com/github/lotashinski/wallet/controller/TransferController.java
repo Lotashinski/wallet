@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import com.github.lotashinski.wallet.service.TransfersServiceInterface;
 import com.github.lotashinski.wallet.service.WalletServiceInterface;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/transfers")
 @RequiredArgsConstructor
+@Validated
 public class TransferController {
 
 	private final TransfersServiceInterface transferService;
@@ -36,10 +39,14 @@ public class TransferController {
 
 	
 	@GetMapping
-	public String index(@RequestParam UUID walletId, Model model) {
+	public String index(@RequestParam UUID walletId, 
+			@RequestParam(defaultValue = "1")
+			@Min(1)
+			int pageNumber, Model model) {
 		model.addAttribute("wallet", walletService.get(walletId));
-		model.addAttribute("transfers", transferService.getByWallet(walletId));
-
+		model.addAttribute("transfers", transferService.getByWallet(walletId, pageNumber - 1));
+		model.addAttribute("pageNumber", pageNumber);
+		
 		return "transfers";
 	}
 

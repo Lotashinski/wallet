@@ -8,5 +8,10 @@ databaseChangeLog:
               update transfer
               set currency_сode = w.currency 
               from wallet w
-              where w.id = wallet_id 
- 
+              where w.id = wallet_id
+      
+      - sql:
+          sql: |
+              insert into wallet_currency
+              select distinct w.id, w.currency 
+              from wallet w

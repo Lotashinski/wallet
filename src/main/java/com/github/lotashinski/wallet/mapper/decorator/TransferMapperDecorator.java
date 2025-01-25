@@ -1,11 +1,13 @@
 package com.github.lotashinski.wallet.mapper.decorator;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.github.lotashinski.wallet.dto.ItemTransferDto;
+import com.github.lotashinski.wallet.dto.SaveTransferDto;
 import com.github.lotashinski.wallet.entity.Transfer;
-import com.github.lotashinski.wallet.exception.NotFoundHttpException;
 import com.github.lotashinski.wallet.mapper.TransferMapperInterface;
 import com.github.lotashinski.wallet.repository.CategoryRepository;
 import com.github.lotashinski.wallet.security.SecurityHolderAdapter;
@@ -26,16 +28,35 @@ public abstract class TransferMapperDecorator implements TransferMapperInterface
 	
 	@Override
 	public Transfer toEntity(ItemTransferDto dto) {
-		var entity = delegate.toEntity(dto);
-		var category = dto.getCategoryId() != null
-				?	categoryRepository
-						.findByPersonAndId(SecurityHolderAdapter.getCurrentUser(), dto.getCategoryId())
-						.orElseThrow(() -> new NotFoundHttpException(String.format("Category %s not found", dto.getCategoryId())))
-				: null;
-
-		entity.setCategory(category);
+		Transfer entity = delegate.toEntity(dto);
 		
-		return entity;
+		return setCategory(entity, dto.getCategoryId());
 	}
 
+	@Override
+	public Transfer toEntity(SaveTransferDto dto) {
+		Transfer entity = delegate.toEntity(dto);
+		
+		return setCategory(entity, dto.getCategoryId());
+	}
+	
+	@Override
+	public Transfer toEntity(SaveTransferDto dto, Transfer transfer) {
+		Transfer entity = delegate.toEntity(dto, transfer);
+		
+		return setCategory(entity, dto.getCategoryId());
+	}
+	
+	private Transfer setCategory(Transfer transfer, UUID categgoryId) {
+		if (categgoryId != null) {
+			categoryRepository
+				.findByPersonAndId(SecurityHolderAdapter.getCurrentUser(), categgoryId)
+				.ifPresent(transfer::setCategory);
+		} else {
+			transfer.setCategory(null);
+		}
+		
+		return transfer;
+	}
+	
 }

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.FORBIDDEN)
-public class InvalidPasswordException extends RuntimeException {
+public class InvalidPasswordException extends HttpBadRequestException {
 
 	private static final long serialVersionUID = 1L;
 

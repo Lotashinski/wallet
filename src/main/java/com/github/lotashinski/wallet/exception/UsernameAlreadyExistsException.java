@@ -1,6 +1,10 @@
 package com.github.lotashinski.wallet.exception;
 
-public class UsernameAlreadyExistsException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(value = HttpStatus.FORBIDDEN)
+public class UsernameAlreadyExistsException extends HttpBadRequestException {
 
 	private static final long serialVersionUID = -1906196727234496871L;
 

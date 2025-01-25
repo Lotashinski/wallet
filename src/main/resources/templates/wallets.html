@@ -21,7 +21,7 @@
         <b>Amount in wallets</b>
         <table>
             <tr th:each="item : ${sum}" class="money">
-                <td th:text="${item.currency.toUpperCase()} + ': '">
+                <td th:text="${item.currency.toUpperCase()}">
                 </td>
                 <td th:text="${item.value}" class="right">
                 </td>
