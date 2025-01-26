@@ -20,7 +20,7 @@
         <thead>
           <tr>
             <th>Title</th>
-            <th>Used in</th>
+            <th>Last 30 days</th>
             <th>Link to</th>
             <th>Has transfers</th>
             <th>Settings</th>
@@ -30,11 +30,11 @@
             <tr th:each="category: ${categories}">
                 <td th:text="${category.title}">...</td>
                 <td>
-                   <div th:each="wallet : ${category.inWallets}">
-                        <a 
-                            th:href="'/transfers?walletId=' + ${wallet.id}" 
-                            th:text="${wallet.title}">LINK</a>
-                   </div>
+                    <div 
+                        th:each="item : ${category.last30Days}" 
+                        class="money" 
+                        th:text="${item.currency.toUpperCase()} + ' ' + ${item.value}"> 
+                    </div>
                 </td>
                 <td>
                    <div th:each="wallet : ${category.wallets}">

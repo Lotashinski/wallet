@@ -1,11 +1,10 @@
 package com.github.lotashinski.wallet.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,6 +16,7 @@ import com.github.lotashinski.wallet.dto.SaveCategoryDto;
 import com.github.lotashinski.wallet.entity.Category;
 import com.github.lotashinski.wallet.entity.CategoryWallet;
 import com.github.lotashinski.wallet.entity.Person;
+import com.github.lotashinski.wallet.entity.Sum;
 import com.github.lotashinski.wallet.entity.Transfer;
 import com.github.lotashinski.wallet.entity.Wallet;
 import com.github.lotashinski.wallet.exception.NotFoundHttpException;
@@ -52,7 +52,7 @@ public class CategoryService implements CategoryServiceInterfate {
 		log.info("Get category {}. User {}", id, person.getId());
 		return categoryRepository
 				.findByPersonAndId(person, id)
-				.map(c -> transferCategoryMapper.toDto(c, findByCategoryInTransfers(c)))
+				.map(c ->  transferCategoryMapper.toDto(c, calculateLast30Days(c)))
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Category(%s) not found", id.toString())));
 	}
 
@@ -79,7 +79,7 @@ public class CategoryService implements CategoryServiceInterfate {
 				.findByPersonAndId(person, id)
 				.map(e -> transferCategoryMapper.updateEntity(category, e))
 				.map(categoryRepository::save)
-				.map(c -> transferCategoryMapper.toDto(c, findByCategoryInTransfers(c)))
+				.map(c -> transferCategoryMapper.toDto(c, calculateLast30Days(c)))
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Category(%s) not found", id.toString())));
 	}
 
@@ -101,18 +101,18 @@ public class CategoryService implements CategoryServiceInterfate {
 	}
 
 	@Override
-	public List<ItemCategoryDto> getAll() {
+	public List<? extends ItemCategoryDto> getAll() {
 		Person person = SecurityHolderAdapter.getCurrentUser();
 		
 		log.info("Get categories. User {}", person.getId());
 		Collection<? extends Category> categories = categoryRepository
 				.findByPerson(person);
-		Map<Category, ? extends Collection<Wallet>> useWalletMap = findByCategoriesInTransfers(categories);
+		Map<Category, ? extends Collection<? extends Sum>> calculatedSum = calculateLast30Days(categories);
 		Map<Category, ? extends Collection<Wallet>> linkWalletMap = findByLinkedCategories(categories);
 		
 		return categories
 				.stream()
-				.map(e -> transferCategoryMapper.toDto(e, useWalletMap.get(e), linkWalletMap.get(e)))
+				.map(e -> transferCategoryMapper.toDto(e, calculatedSum.get(e), linkWalletMap.get(e)))
 				.toList();
 	}
 	
@@ -127,16 +127,44 @@ public class CategoryService implements CategoryServiceInterfate {
 		
 		Collection<? extends Category> categories = categoryRepository
 				.findByPersonAndWallet(person, wallet);
-		Map<Category, ? extends Collection<Wallet>> walletMap = findByCategoriesInTransfers(categories);
+		Map<Category, ? extends Collection<? extends Sum>> calculatedSum = calculateLast30Days(categories);
 		
 		return categories
 				.stream()
-				.map(e -> transferCategoryMapper.toDto(e, walletMap.get(e)))
+				.map(e -> transferCategoryMapper.toDto(e, calculatedSum.get(e)))
 				.toList();
 	}
+	
+	private Collection<? extends Sum> calculateLast30Days(Category category) {
+		return calculateLast30Days(List.of(category))
+				.get(category);
+	}
+	
+	private Map<Category, ? extends Collection<? extends Sum>> calculateLast30Days(Collection<? extends Category> categories) {
+		Map<Category, Collection<? extends Sum>> calculated = new HashMap<>();
 		
-	private Collection<Wallet> findByCategoryInTransfers(Category c) {
-		return findByCategoriesInTransfers(List.of(c)).get(c);
+		getLast30DaysTransfers(categories)
+			.entrySet()
+			.stream()
+			.forEach(es -> {
+				Category category = es.getKey();
+				Collection<? extends Transfer> transfers = es.getValue();
+				
+				SumCalculator calculator = new SumCalculator(transfers);
+				calculated.put(category, calculator.calculate());
+			});
+		
+		return calculated;
+	}
+	
+	
+	private Map<Category, ? extends Collection<? extends Transfer>> getLast30DaysTransfers(
+			Collection<? extends Category> categories) {
+		LocalDateTime current = LocalDateTime.now();
+		LocalDateTime last30Days = current.minusDays(30);
+		return transferRepository.findByCategoriesAfterTimestamp(categories, last30Days)
+					.stream()
+					.collect(Collectors.groupingBy(Transfer::getCategory));
 	}
 	
 	private Map<Category, ? extends Collection<Wallet>> findByLinkedCategories(
@@ -151,31 +179,6 @@ public class CategoryService implements CategoryServiceInterfate {
 								)
 							)
 						);
-	}
-	
-	private	Map<Category, ? extends Collection<Wallet>> findByCategoriesInTransfers(
-			Collection<? extends Category> categories) {
-		
-		return transferRepository
-			.findByCategories(categories)
-			.stream()
-			.collect(HashMap<Category, Set<Wallet>>::new, CategoryService::consumeTransfer, Map::putAll);
-	}
-	
-	private static Map<Category, Set<Wallet>> consumeTransfer(
-			Map<Category, Set<Wallet>> map, Transfer t) {
-		
-		Category category = t.getCategory();
-		Set<Wallet> set = map.get(category);
-		
-		if (set == null) {
-			set = new HashSet<Wallet>();
-			map.put(category, set);
-		}
-		
-		set.add(t.getWallet());
-		
-		return map;
 	}
 	
 }

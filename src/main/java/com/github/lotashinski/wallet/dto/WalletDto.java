@@ -1,6 +1,5 @@
 package com.github.lotashinski.wallet.dto;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -18,8 +17,8 @@ public class WalletDto {
 	
 	private String title;
 	
-	private Collection<Sum> values = new ArrayList<>();
+	private Collection<? extends Sum> values;
 	
-	private Collection<String> currencyCodes = new ArrayList<>();
+	private Collection<? extends String> currencyCodes;
 	
 }

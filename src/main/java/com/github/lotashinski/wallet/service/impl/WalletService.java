@@ -1,6 +1,5 @@
 package com.github.lotashinski.wallet.service.impl;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -65,8 +64,12 @@ public class WalletService implements WalletServiceInterface {
 		log.debug("Map wallets", person.getId());
 		return wallets
 				.stream()
-				.map(w -> 	
-					walletMapper.toItemDto(w, calculateSum(transfers.get(w.getId())))					
+				.map(w -> {
+						Collection<? extends Transfer> ts = transfers.get(w.getId());
+						SumCalculator calculator = new SumCalculator(ts);
+						
+						return walletMapper.toItemDto(w, calculator.calculate());
+					}
 				)
 				.toList();
 	}
@@ -82,7 +85,9 @@ public class WalletService implements WalletServiceInterface {
 		Collection<? extends Transfer> transfers = transferRepository
 				.getByWalletOrderByTimeDesc(wallet);
 		
-		return walletMapper.toDto(wallet, calculateSum(transfers));
+		SumCalculator calculator = new SumCalculator(transfers);
+		
+		return walletMapper.toDto(wallet, calculator.calculate());
 	}
 
 	@Override
@@ -107,10 +112,10 @@ public class WalletService implements WalletServiceInterface {
 				.map(e -> walletMapper.updateEntity(dto, e))
 				.map(walletRepository::save)
 				.map(w -> {
-					Collection<? extends Transfer> t = transferRepository
-							.getByWalletOrderByTimeDesc(w);
+					SumCalculator calculator = new SumCalculator(transferRepository
+							.getByWalletOrderByTimeDesc(w));
 					
-					return walletMapper.toDto(w, calculateSum(t));
+					return walletMapper.toDto(w, calculator.calculate());
 				})
 				.orElseThrow(() -> WalletService.generateNotFoundException(id));
 	}
@@ -221,25 +226,6 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public Collection<Sum> getSumForAllWallets() {
 		return walletRepository.getSumForPerson(SecurityHolderAdapter.getCurrentUser());
-	}
-	
-	private static Collection<? extends Sum> calculateSum(Collection<? extends Transfer> transfers) {
-		Map<String, List<Transfer>> grouping = transfers
-			.stream()
-			.collect(Collectors.groupingBy(Transfer::getCurrencyCode));
-		
-		return grouping.entrySet()
-				.stream()
-				.map(e -> {
-				     BigDecimal sum = e.getValue()
-				    		 .stream()
-				    		 .map(Transfer::getValue)
-				    		 .reduce((l, r) -> l.add(r))
-				    		 .orElse(BigDecimal.ZERO);
-				     
-				     return new Sum(e.getKey(), sum);
-				})
-				.toList();
 	}
 	
 

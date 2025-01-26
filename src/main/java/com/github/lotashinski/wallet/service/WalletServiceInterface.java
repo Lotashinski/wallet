@@ -13,13 +13,13 @@ import com.github.lotashinski.wallet.entity.Sum;
 
 public interface WalletServiceInterface {
 	
-	Collection<ItemWalletValuedDto> getAll();
+	Collection<? extends ItemWalletValuedDto> getAll();
 	
 	Collection<Sum> getSumForAllWallets();
 	
-	List<SelectedWalletsDto> getCategoryWallets(UUID categoryId);
+	List<? extends SelectedWalletsDto> getCategoryWallets(UUID categoryId);
 	
-	List<SelectedCategoryDto> getWalletCategories(UUID walletId);
+	List<? extends SelectedCategoryDto> getWalletCategories(UUID walletId);
 	
 	
 	void setCategoryWallets(UUID categoryId, Collection<UUID> walletsIds);

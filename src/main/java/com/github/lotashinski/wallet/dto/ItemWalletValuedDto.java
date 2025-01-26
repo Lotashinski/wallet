@@ -16,6 +16,6 @@ public class ItemWalletValuedDto {
 	
 	private String title;
 
-	private Collection<Sum> values;
+	private Collection<? extends Sum> values;
 	
 }

@@ -1,5 +1,6 @@
 package com.github.lotashinski.wallet.repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -69,5 +70,17 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			WHERE c in (:categories)
 			""")
 	Collection<? extends Transfer> findByCategories(@Param("categories") Collection<? extends Category> categories);
+	
+	@Query("""
+			SELECT t, w, c
+			FROM Transfer t
+			INNER JOIN t.wallet w
+			LEFT JOIN t.category c
+			WHERE c in (:categories)
+				AND t.time > :after
+			""")
+	Collection<? extends Transfer> findByCategoriesAfterTimestamp(
+			@Param("categories") Collection<? extends Category> categories,
+			@Param("after") LocalDateTime after);
 	
 }

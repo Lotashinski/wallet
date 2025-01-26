@@ -52,7 +52,7 @@ public class Wallet {
 	private Set<CategoryWallet> categoryWallets = new HashSet<>();
 	
 	
-	public void setCurrencyCodes(Collection<String> codes) {
+	public void setCurrencyCodes(Collection<? extends String> codes) {
 		Set<String> currentState = new HashSet<>(getCurrencyCodes());
 		
 		Set<String> forPersists = new HashSet<>(codes);
@@ -70,7 +70,7 @@ public class Wallet {
 				);
 	}
 	
-	public List<String> getCurrencyCodes() {
+	public List<? extends String> getCurrencyCodes() {
 		return getCurrencies()
 				.stream()
 				.map(WalletCurrency::getCode)

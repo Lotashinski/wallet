@@ -8,9 +8,9 @@ import com.github.lotashinski.wallet.dto.SaveCategoryDto;
 
 public interface CategoryServiceInterfate {
 	
-	List<ItemCategoryDto> getAll();
+	List<? extends ItemCategoryDto> getAll();
 	
-	List<ItemCategoryDto> getWalletCategories(UUID walletId);
+	List<? extends ItemCategoryDto> getWalletCategories(UUID walletId);
 	
 	ItemCategoryDto get(UUID id);
 	

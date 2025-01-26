@@ -9,6 +9,6 @@ public class SaveWalletDto {
 
 	private String title;
 	
-	private Collection<String> currencyCodes;
+	private Collection<? extends String> currencyCodes;
 	
 }
