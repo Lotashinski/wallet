@@ -119,7 +119,7 @@ public class TransferService implements TransfersServiceInterface {
 		log.info("Load last transactions. User {}", person.getId());
 		
 		return transferRepository
-				.getByOrderByTimeDesc(person, Limit.of(15))
+				.getForPersonOrderByTimeDesc(person, Limit.of(15))
 				.stream()
 				.map(transferMapper::toDto)
 				.toList();

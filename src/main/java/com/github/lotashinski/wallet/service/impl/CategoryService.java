@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.lotashinski.wallet.dto.ItemCategoryDto;
 import com.github.lotashinski.wallet.dto.SaveCategoryDto;
 import com.github.lotashinski.wallet.entity.Category;
-import com.github.lotashinski.wallet.entity.CategoryWallet;
 import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.entity.Sum;
 import com.github.lotashinski.wallet.entity.Transfer;
@@ -87,7 +86,6 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Override
 	public void delete(UUID id) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Delete category {}. User {}", id, person.getId());
 		
 		Category entity = categoryRepository
@@ -103,16 +101,15 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Override
 	public List<? extends ItemCategoryDto> getAll() {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Get categories. User {}", person.getId());
+		
 		Collection<? extends Category> categories = categoryRepository
 				.findByPerson(person);
 		Map<Category, ? extends Collection<? extends Sum>> calculatedSum = calculateLast30Days(categories);
-		Map<Category, ? extends Collection<Wallet>> linkWalletMap = findByLinkedCategories(categories);
 		
 		return categories
 				.stream()
-				.map(e -> transferCategoryMapper.toDto(e, calculatedSum.get(e), linkWalletMap.get(e)))
+				.map(e -> transferCategoryMapper.toDto(e, calculatedSum.get(e)))
 				.toList();
 	}
 	
@@ -140,7 +137,7 @@ public class CategoryService implements CategoryServiceInterfate {
 				.get(category);
 	}
 	
-	private Map<Category, ? extends Collection<? extends Sum>> calculateLast30Days(Collection<? extends Category> categories) {
+	private Map<Category, Collection<? extends Sum>> calculateLast30Days(Collection<? extends Category> categories) {
 		Map<Category, Collection<? extends Sum>> calculated = new HashMap<>();
 		
 		getLast30DaysTransfers(categories)
@@ -158,27 +155,15 @@ public class CategoryService implements CategoryServiceInterfate {
 	}
 	
 	
-	private Map<Category, ? extends Collection<? extends Transfer>> getLast30DaysTransfers(
+	private Map<Category, ? extends Collection<Transfer>> getLast30DaysTransfers(
 			Collection<? extends Category> categories) {
 		LocalDateTime current = LocalDateTime.now();
 		LocalDateTime last30Days = current.minusDays(30);
-		return transferRepository.findByCategoriesAfterTimestamp(categories, last30Days)
+		
+		return transferRepository
+					.findByCategoriesAfterTimestamp(categories, last30Days)
 					.stream()
 					.collect(Collectors.groupingBy(Transfer::getCategory));
 	}
-	
-	private Map<Category, ? extends Collection<Wallet>> findByLinkedCategories(
-			Collection<? extends Category> categories) {
 		
-		return walletRepository
-				.findByCategories(categories)
-				.stream()
-				.collect(Collectors.groupingBy(CategoryWallet::getCategory, 
-							Collectors.mapping(CategoryWallet::getWallet, 
-										Collectors.toSet()
-								)
-							)
-						);
-	}
-	
 }

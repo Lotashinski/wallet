@@ -12,16 +12,12 @@ import com.github.lotashinski.wallet.dto.SelectedCategoryDto;
 import com.github.lotashinski.wallet.entity.Category;
 import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.entity.Sum;
-import com.github.lotashinski.wallet.entity.Wallet;
 
 
 @org.mapstruct.Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {WalletMapperInterface.class})
 public interface CategoryMapperInterface {
 
 	ItemCategoryDto toDto(Category category, Collection<? extends Sum> last30Days);
-
-	@Mapping(target = "wallets", source = "wallets")
-	ItemCategoryDto toDto(Category category, Collection<? extends Sum> last30Days, Collection<Wallet> wallets);
 	
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "creator", ignore = true)

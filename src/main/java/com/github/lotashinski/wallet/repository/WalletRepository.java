@@ -27,10 +27,10 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
 	Collection<Wallet> findByPersonAndIds(@Param("creator") Person person, @Param("ids") Collection<? extends UUID> ids);
 	
 	@Query("""
-			SELECT cw, c, w
+			SELECT cw
 			FROM CategoryWallet cw
-			INNER JOIN cw.wallet w
-			INNER JOIN cw.category c
+			INNER JOIN FETCH cw.wallet w
+			INNER JOIN FETCH cw.category c
 			WHERE c in (:categories)
 			""")
 	Collection<CategoryWallet> findByCategories(@Param("categories") Collection<? extends Category> categories);

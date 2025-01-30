@@ -35,6 +35,8 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 	@Query(value = """
 			SELECT c
 			FROM Category c
+			LEFT JOIN FETCH c.categoryWallets cw
+			LEFT JOIN FETCH cw.wallet w
 			WHERE c.creator = :creator
 			ORDER BY lower(c.title)
 			""")

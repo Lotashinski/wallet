@@ -30,11 +30,13 @@
             <tr th:each="category: ${categories}">
                 <td th:text="${category.title}">...</td>
                 <td>
-                    <div 
-                        th:each="item : ${category.last30Days}" 
-                        class="money" 
-                        th:text="${item.currency.toUpperCase()} + ' ' + ${item.value}"> 
-                    </div>
+                    <table style="width: 100%"> 
+                        <tr
+                            th:each="item : ${category.last30Days}">
+                            <td class="money" th:text="${item.currency.toUpperCase()}"></td>
+                            <td class="money right" th:text="${item.value}"></td>
+                        </tr> 
+                    </table>
                 </td>
                 <td>
                    <div th:each="wallet : ${category.wallets}">

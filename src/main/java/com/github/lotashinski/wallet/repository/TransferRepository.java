@@ -31,10 +31,10 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 	Optional<? extends Transfer> findByPersonAndId(@Param("creator") Person person, @Param("id") UUID id);
 	
 	@Query("""
-			SELECT t, w, c
+			SELECT t
 			FROM Transfer t
-			INNER JOIN t.wallet w
-			LEFT JOIN t.category c
+			INNER JOIN FETCH t.wallet w
+			LEFT JOIN FETCH t.category c
 			WHERE t.wallet = :wallet
 			ORDER BY t.time DESC
 			""")
@@ -43,39 +43,39 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 	Page<? extends Transfer> getByWalletOrderByTimeDesc(Wallet wallet, Pageable pageable);
 	
 	@Query("""
-			SELECT t, w, c
+			SELECT t
 			FROM Transfer t
-			INNER JOIN t.wallet w
-			LEFT JOIN t.category c
+			INNER JOIN FETCH t.wallet w
+			LEFT JOIN FETCH t.category c
 			WHERE w IN (:wallets)
 			ORDER BY t.time DESC
 			""")
 	List<? extends Transfer> getByWalletOrderByTimeDesc(@Param("wallets") Collection<Wallet> wallets);
 	
 	@Query("""
-			SELECT t, w, c
+			SELECT t
 			FROM Transfer t
-			INNER JOIN t.wallet w
-			LEFT JOIN t.category c
+			JOIN FETCH t.wallet w
+			JOIN FETCH t.category c
 			WHERE w.creator = :creator
 			ORDER BY t.time DESC, t.value DESC 
 			""")
-	List<? extends Transfer> getByOrderByTimeDesc(@Param("creator") Person person, Limit limit);
+	List<? extends Transfer> getForPersonOrderByTimeDesc(@Param("creator") Person person, Limit limit);
 	
 	@Query("""
-			SELECT t, w, c
+			SELECT t
 			FROM Transfer t
-			INNER JOIN t.wallet w
-			LEFT JOIN t.category c
+			JOIN FETCH t.wallet w
+			JOIN FETCH t.category c
 			WHERE c in (:categories)
 			""")
 	Collection<? extends Transfer> findByCategories(@Param("categories") Collection<? extends Category> categories);
 	
 	@Query("""
-			SELECT t, w, c
+			SELECT t
 			FROM Transfer t
-			INNER JOIN t.wallet w
-			LEFT JOIN t.category c
+			JOIN FETCH t.wallet w
+			LEFT JOIN FETCH t.category c
 			WHERE c in (:categories)
 				AND t.time > :after
 			""")
