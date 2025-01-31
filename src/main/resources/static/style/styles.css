@@ -86,6 +86,10 @@ form label {
     font-size: 1.25rem;
 }
 
+.float-right {
+	float: right;
+}
+
 .medium {
     font-size: 1.15rem;
 }

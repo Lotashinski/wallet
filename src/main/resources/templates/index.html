@@ -21,7 +21,7 @@
     <ul class="header__navigation" sec:authorize="isAuthenticated()">
         <li>
             <a class="header__navigation-item" href="/profile" >
-                <img class="header__navigation-pic" alt="profile picture" th:src="@{profile.png}"/> 
+                <img class="header__navigation-pic" alt="profile picture" th:src="@{/img/profile.png}"/> 
                 <span sec:authentication="name"></span>
             </a>
         </li>        

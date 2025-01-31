@@ -9,6 +9,8 @@
   <main class="container">
     <section class="card content">
        
+        <a onclick="history.back()" href="#">Go back</a>
+       
         <h3 th:text="'Wallet: ' + ${wallet.title}">TITLE</h3>
         <table>
             <tr th:each="value : ${wallet.values}" class="money">
@@ -26,7 +28,6 @@
                     <th>Value</th>
                     <th>Category</th>
                     <th>Description</th>
-                    <th>Settings</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,9 +35,11 @@
                     <td th:text="${#temporals.format(transfer.time, 'dd MMM yyyy HH:mm')}">...</td>
                     <td class="money right" th:text="${transfer.value} + ' ' + ${transfer.currencyCode.toUpperCase()}">...</td>
                     <td th:text="${transfer.categoryTitle}">...</td>
-                    <td th:text="${transfer.description}">...</td>
                     <td>
-                        <a th:href="'/transfers/' + ${transfer.id}" class="button">Edit</a>
+                        <a class="float-right" th:href="'/transfers/' + ${transfer.id}">
+                            <img class="text-ico" alt="Edit" th:src="@{/img/pen32.png}">
+                        </a>    
+                        <span th:text="${transfer.description}"></span>
                     </td>
                 </tr>
             </tbody>

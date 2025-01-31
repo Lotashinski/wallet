@@ -8,6 +8,9 @@
 
   <main class="container">
     <section class="card content">
+    
+        <a onclick="history.back()" href="#">Go back</a>
+    
         <h3 th:if="${transfer.id == null}">Create new transfer</h3>
         <h3 th:if="${transfer.id != null}">Update transfer</h3>
         <form method="POST" th:object="${transfer}">
