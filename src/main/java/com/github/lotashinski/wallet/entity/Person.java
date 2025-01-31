@@ -57,6 +57,4 @@ public class Person implements Serializable {
 		return Objects.equals(id, other.id);
 	}
 	
-	
-	
 }

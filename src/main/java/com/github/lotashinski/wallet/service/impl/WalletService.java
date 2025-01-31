@@ -51,8 +51,8 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public Collection<ItemWalletValuedDto> getAll() {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Get wallets. User {}", person.getId());
+		
 		Collection<Wallet> wallets = walletRepository.findByPerson(person);
 		
 		log.debug("Load transfers for wallets", person.getId());
@@ -78,8 +78,8 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public WalletDto get(UUID id) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Get wallet {}. User {}", id, person.getId());
+		
 		Wallet wallet = walletRepository.findByPersonAndId(person, id)
 				.orElseThrow(() -> generateNotFoundException(id));
 		
@@ -94,8 +94,8 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public WalletDto create(SaveWalletDto dto) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Create wallet {}. User {}", dto, person.getId());
+		
 		Wallet wallet = walletMapper.toEntity(dto, person);
 		Wallet entity = walletRepository.save(wallet);
 		
@@ -105,7 +105,6 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public WalletDto update(UUID id, SaveWalletDto dto) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Update wallet {}, set {}. User {}", id, dto, person.getId());
 		
 		return walletRepository
@@ -124,8 +123,8 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public void delete(UUID id) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Delete wallet {}. User {}", id, person.getId());
+		
 		Wallet entity = walletRepository
 				.findByPersonAndId(person, id)
 				.orElseThrow(() -> generateNotFoundException(id));
@@ -136,8 +135,8 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public List<SelectedWalletsDto> getCategoryWallets(UUID categoryid) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Get category {} wallets. User {}", categoryid, person.getId());
+		
 		Category category = categoryRepository
 				.findByPersonAndId(person, categoryid)
 				.orElseThrow(() -> categoryNotFoundException(categoryid));
@@ -154,8 +153,8 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public void setCategoryWallets(UUID categoryId, Collection<UUID> walletsIds) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-	
 		log.info("Set category {} wallets. User {}", categoryId, person.getId());
+		
 		Category category = categoryRepository.findByPersonAndId(person, categoryId)
 				.orElseThrow(() -> categoryNotFoundException(categoryId));
 		
@@ -182,8 +181,8 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public List<SelectedCategoryDto> getWalletCategories(UUID walletId) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Get wallet {} categories. User {}", walletId, person.getId());
+		
 		Wallet entity = walletRepository
 				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> generateNotFoundException(walletId));
@@ -200,8 +199,8 @@ public class WalletService implements WalletServiceInterface {
 	@Override
 	public void setWalletCategories(UUID walletId, Collection<UUID> categoriesIds) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Set wallet {} categories. User {}", walletId, person.getId());
+		
 		Wallet entity = walletRepository
 				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> generateNotFoundException(walletId));

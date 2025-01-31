@@ -29,6 +29,8 @@ public class RegistrationService implements RegistrationServiceInterface {
 	
 	@Override
 	public void registration(RegistrationDto dto) {
+		log.info("Registration new user {}", dto);
+		
 		String email = dto.getEmail().toLowerCase();
 		if(personRepository.findOneByEmail(email).isPresent()) {
 			var text = String.format("Email \"%s\" already exists.", email);

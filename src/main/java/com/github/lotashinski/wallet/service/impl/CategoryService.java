@@ -47,8 +47,8 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Override
 	public ItemCategoryDto get(UUID id) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Get category {}. User {}", id, person.getId());
+		
 		return categoryRepository
 				.findByPersonAndId(person, id)
 				.map(c ->  transferCategoryMapper.toDto(c, calculateLast30Days(c)))
@@ -59,8 +59,8 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Override
 	public ItemCategoryDto create(SaveCategoryDto dto) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Create category {}. User {}", dto, person.getId());
+		
 		Category entity = transferCategoryMapper.toEntity(dto, person);
 
 		categoryRepository.save(entity);
@@ -116,8 +116,8 @@ public class CategoryService implements CategoryServiceInterfate {
 	@Override
 	public List<ItemCategoryDto> getWalletCategories(UUID walletId) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Get wallet {} categories. User {}", walletId, person.getId());
+		
 		Wallet wallet = walletRepository
 				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %s not found", walletId)));
@@ -131,6 +131,7 @@ public class CategoryService implements CategoryServiceInterfate {
 				.map(e -> transferCategoryMapper.toDto(e, calculatedSum.get(e)))
 				.toList();
 	}
+	
 	
 	private Collection<? extends Sum> calculateLast30Days(Category category) {
 		return calculateLast30Days(List.of(category))
@@ -153,7 +154,6 @@ public class CategoryService implements CategoryServiceInterfate {
 		
 		return calculated;
 	}
-	
 	
 	private Map<Category, ? extends Collection<Transfer>> getLast30DaysTransfers(
 			Collection<? extends Category> categories) {

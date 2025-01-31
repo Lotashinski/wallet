@@ -130,7 +130,6 @@ public class Wallet {
 		return Objects.hash(id);
 	}
 
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

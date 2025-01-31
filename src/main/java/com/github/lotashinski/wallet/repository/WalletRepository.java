@@ -78,5 +78,4 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
 			""")
 	List<Wallet> findByPerson(@Param("creator") Person person);
 	
-	
 }

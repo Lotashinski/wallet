@@ -45,9 +45,9 @@ public class TransferService implements TransfersServiceInterface {
 	@Override
 	public ItemTransferDto create(UUID wallUuid, SaveTransferDto dto) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		Transfer entity = transferMapper.toEntity(dto);
-		
 		log.info("Create new transfer in wallet {} {}. User {}", wallUuid, dto, person.getId());
+		
+		Transfer entity = transferMapper.toEntity(dto);
 		Wallet wallet = walletRepository.findByPersonAndId(person, wallUuid)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %s not found", wallUuid)));
 		entity.setWallet(wallet);
@@ -61,7 +61,6 @@ public class TransferService implements TransfersServiceInterface {
 	@Override
 	public ItemTransferDto update(UUID transferId, SaveTransferDto dto) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Update transfer {}. User {}", transferId, person.getId());
 		log.debug("TransferId {}, saved data {}", transferId, dto);
 		
@@ -77,7 +76,6 @@ public class TransferService implements TransfersServiceInterface {
 	@Override
 	public void delete(UUID transferId) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Delete transfer {}. User {}", transferId, person.getId());
 		
 		Transfer entity = transferRepository
@@ -91,8 +89,8 @@ public class TransferService implements TransfersServiceInterface {
 	@Override
 	public Page<? extends ItemTransferDto> getByWallet(UUID walletId, int pageNumber) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Get wallet {} transfers. User {}", walletId, person.getId());
+		
 		Wallet wallet = walletRepository
 				.findByPersonAndId(person, walletId)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Wallet %w not found", walletId)));
@@ -108,7 +106,6 @@ public class TransferService implements TransfersServiceInterface {
 	@Override
 	public ItemTransferDto get(UUID transferId) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
-		
 		log.info("Get transfer {}. User {}", transferId, person.getId());
 		
 		return transferRepository

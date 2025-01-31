@@ -48,6 +48,7 @@ public class Category {
 	@OneToMany(mappedBy = "category")
 	private List<Transfer> transfers = new ArrayList<>();
 	
+	
 	public void addCategoryWallet(CategoryWallet categoryWallet) {
 		var cwSet = getCategoryWallets();
 		if (cwSet.contains(categoryWallet)) {
@@ -93,6 +94,7 @@ public class Category {
 				.collect(Collectors.toSet());
 	}
 
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

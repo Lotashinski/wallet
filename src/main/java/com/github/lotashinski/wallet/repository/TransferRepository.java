@@ -99,4 +99,5 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			@Param("categories") Collection<? extends Category> categories,
 			@Param("start") LocalDateTime start,
 			@Param("end") LocalDateTime end);
+	
 }

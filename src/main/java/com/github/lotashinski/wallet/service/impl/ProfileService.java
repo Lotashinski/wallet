@@ -13,7 +13,9 @@ import com.github.lotashinski.wallet.security.SecurityHolderAdapter;
 import com.github.lotashinski.wallet.service.ProfileServiceInterface;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProfileService implements ProfileServiceInterface {

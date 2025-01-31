@@ -49,6 +49,7 @@ public abstract class TransferMapperDecorator implements TransferMapperInterface
 		return setCategory(entity, dto.getCategoryId());
 	}
 	
+	
 	private Transfer setCategory(Transfer transfer, UUID categgoryId) {
 		if (categgoryId != null) {
 			Category category = categoryRepository
