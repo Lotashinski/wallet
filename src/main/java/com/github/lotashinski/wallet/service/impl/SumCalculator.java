@@ -18,6 +18,10 @@ class SumCalculator {
 	
 	
 	public Collection<? extends Sum> calculate() {
+		if (transfers == null) {
+			return List.of();
+		}
+		
 		Map<String, List<Transfer>> grouping = transfers
 			.stream()
 			.collect(Collectors.groupingBy(Transfer::getCurrencyCode));

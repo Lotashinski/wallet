@@ -46,10 +46,10 @@ public class WalletController {
 	public String newWallet(Model model, SaveWalletDto wallet) {
 		var item = walletService.create(wallet);
 		
-		return "redirect:/wallets/" + item.getId();
+		return "redirect:/wallets/" + item.getId() + "/edit";
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/{id}/edit")
 	public String editWalletPage(Model model, @PathVariable UUID id) {
 		model.addAttribute("wallet", walletService.get(id));
 		model.addAttribute("categories", walletService.getWalletCategories(id));
@@ -57,21 +57,21 @@ public class WalletController {
 		return "wallet_form";
 	}
 	
-	@RequestMapping(path = "/{id}", method = {RequestMethod.PUT, RequestMethod.POST})
+	@RequestMapping(path = "/{id}/edit", method = {RequestMethod.PUT, RequestMethod.POST})
 	public String editWallet(@PathVariable UUID id, SaveWalletDto wallet) {
 		var item = walletService.update(id, wallet);
 		
-		return "redirect:/wallets/" + item.getId();
+		return "redirect:/wallets/" + item.getId() + "/edit";
 	}
 	
-	@PostMapping(path = "/{id}/categories")
+	@PostMapping(path = "/{id}/edit/categories")
 	public String editWalletCategories(@PathVariable UUID id, @RequestParam(required = false) Collection<UUID> selected) {
 		walletService.setWalletCategories(id, selected);
 		
-		return "redirect:/wallets/" + id;
+		return "redirect:/wallets/" + id + "/edit";
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/{id}/edit")
 	public String delete(@PathVariable UUID id) {
 		walletService.delete(id);
 		

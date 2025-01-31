@@ -20,30 +20,29 @@
         <a th:href="'/transfers/new?walletId=' + ${wallet.id}" class="button">Create new transfer</a>
         
         <table class="table">
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>Value</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Settings</th>
-          </tr>
-        </thead>
-        <tbody>
-            <tr th:each="transfer : ${transfers}">
-                <td th:text="${#temporals.format(transfer.time, 'dd MMM yyyy HH:mm')}">...</td>
-                <td class="money right" th:text="${transfer.value} + ' ' + ${transfer.currencyCode.toUpperCase()}">...</td>
-                <td th:text="${transfer.categoryTitle}">...</td>
-                <td th:text="${transfer.description}">...</td>
-                <td>
-                    <a th:href="'/transfers/' + ${transfer.id}" class="button">Edit</a>
-                    
-                </td>
-            </tr>
-        </tbody>
-      </table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Value</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Settings</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="transfer : ${transfers}">
+                    <td th:text="${#temporals.format(transfer.time, 'dd MMM yyyy HH:mm')}">...</td>
+                    <td class="money right" th:text="${transfer.value} + ' ' + ${transfer.currencyCode.toUpperCase()}">...</td>
+                    <td th:text="${transfer.categoryTitle}">...</td>
+                    <td th:text="${transfer.description}">...</td>
+                    <td>
+                        <a th:href="'/transfers/' + ${transfer.id}" class="button">Edit</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
       
-      <div th:if="${transfers.totalPages > 1}" th:with="deltaPage = ${transfers.totalPages} - ${pageNumber}">
+        <div th:if="${transfers.totalPages > 1}" th:with="deltaPage = ${transfers.totalPages} - ${pageNumber}">
       
         <a th:if="${pageNumber} > 3"
             th:href="@{/transfers(walletId=${param.walletId}, pageNumber=1)}"

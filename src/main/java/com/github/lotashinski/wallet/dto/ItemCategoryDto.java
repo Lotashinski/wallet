@@ -16,8 +16,6 @@ public class ItemCategoryDto {
 	
 	private String title;
 	
-	private Boolean hasTransfers;
-	
 	private Collection<? extends ItemWalletDto> wallets;
 	
 	private Collection<? extends Sum> last30Days;

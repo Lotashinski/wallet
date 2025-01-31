@@ -62,6 +62,7 @@ public class WalletService implements WalletServiceInterface {
 				.collect(Collectors.groupingBy(t -> t.getWallet().getId()));
 		
 		log.debug("Map wallets", person.getId());
+		
 		return wallets
 				.stream()
 				.map(w -> {

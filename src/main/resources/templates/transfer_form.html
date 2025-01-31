@@ -70,11 +70,12 @@
     <section th:if="${transfer.id != null}" class="info-box">
         
         <h3 class="info-box__header">Danger zone</h3>
-        <form th:action="'/transfers/' + ${transfer.id}" th:method="delete">
+        <form th:method="delete">
             <p>
                 Irreversible operation. Operation will be deleted permanently.
                 <span class="underline">You will lose data.</span>
             </p>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="submit" class="button button-cancel" value="Delete operation">
         </form>
         

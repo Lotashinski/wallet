@@ -1,6 +1,7 @@
 package com.github.lotashinski.wallet.service.impl;
 
-import java.util.Collection;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Limit;
@@ -11,11 +12,13 @@ import org.springframework.stereotype.Service;
 
 import com.github.lotashinski.wallet.dto.ItemTransferDto;
 import com.github.lotashinski.wallet.dto.SaveTransferDto;
+import com.github.lotashinski.wallet.entity.Category;
 import com.github.lotashinski.wallet.entity.Person;
 import com.github.lotashinski.wallet.entity.Transfer;
 import com.github.lotashinski.wallet.entity.Wallet;
 import com.github.lotashinski.wallet.exception.NotFoundHttpException;
 import com.github.lotashinski.wallet.mapper.TransferMapperInterface;
+import com.github.lotashinski.wallet.repository.CategoryRepository;
 import com.github.lotashinski.wallet.repository.TransferRepository;
 import com.github.lotashinski.wallet.repository.WalletRepository;
 import com.github.lotashinski.wallet.security.SecurityHolderAdapter;
@@ -31,6 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 public class TransferService implements TransfersServiceInterface {
 
 	private final TransferRepository transferRepository;
+	
+	private final CategoryRepository categoryRepository;
 	
 	private final WalletRepository walletRepository;
 	
@@ -114,12 +119,27 @@ public class TransferService implements TransfersServiceInterface {
 
 	@Transactional
 	@Override
-	public Collection<? extends ItemTransferDto> getLast() {
+	public List<? extends ItemTransferDto> getLast() {
 		Person person = SecurityHolderAdapter.getCurrentUser();
 		log.info("Load last transactions. User {}", person.getId());
 		
 		return transferRepository
 				.getForPersonOrderByTimeDesc(person, Limit.of(15))
+				.stream()
+				.map(transferMapper::toDto)
+				.toList();
+	}
+
+	@Override
+	public List<? extends ItemTransferDto> getByCategoryAndPeriod(UUID categoryId, LocalDateTime start, LocalDateTime end) {
+		Person person = SecurityHolderAdapter.getCurrentUser();
+		log.info("Get transfers by category {} and period {}-{}. User {}", categoryId, start, end, person.getId());
+		
+		Category category = categoryRepository.findByPersonAndId(person, categoryId)
+				.orElseThrow(() -> new NotFoundHttpException(String.format("Categgory %s not found", categoryId)));
+		
+		return transferRepository
+				.findByCategoriesAndPersiod(List.of(category), start, end)
 				.stream()
 				.map(transferMapper::toDto)
 				.toList();

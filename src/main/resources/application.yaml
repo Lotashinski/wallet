@@ -21,8 +21,14 @@ spring:
           enabled: true
 
 logging:
-  level:
-    root: info
+    level:
+        org:
+            springframework:
+                boot:
+                    autoconfigure: ERROR
+        root: debug
+        sql: debug
+                 
           
 server:
     port: ${APP_PORT:8000}

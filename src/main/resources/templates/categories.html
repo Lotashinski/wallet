@@ -4,11 +4,13 @@
 <head th:replace="index.html :: head"></head>
 
 <body>
-  <div th:replace="index.html :: header"></div>
+  <div th:replace="~{ index.html :: header }"></div>
 
   <main class="container">
+  
     <section class="card content">
-        <button th:if="${parent != null}" onclick="history.back()" class="button button-cancel">Go back</button>
+        
+        <a onclick="history.back()" href="#">Go back</a>
 
         <a th:if="${parent == null}" href="/categories/new" class="button">Create new category</a>
         
@@ -22,34 +24,28 @@
             <th>Title</th>
             <th>Last 30 days</th>
             <th>Link to</th>
-            <th>Has transfers</th>
-            <th>Settings</th>
           </tr>
         </thead>
         <tbody>
             <tr th:each="category: ${categories}">
-                <td th:text="${category.title}">...</td>
-                <td>
-                    <table style="width: 100%"> 
-                        <tr
-                            th:each="item : ${category.last30Days}">
-                            <td class="money" th:text="${item.currency.toUpperCase()}"></td>
-                            <td class="money right" th:text="${item.value}"></td>
-                        </tr> 
-                    </table>
+                <td >
+                    <span th:text="${category.title}"></span>
+                    <a th:href="'/categories/' + ${category.id} + '/edit'" href="#">
+                        <img class="text-ico" alt="Edit" th:src="@{/pen.svg}" src="#">
+                    </a>
+                </td>
+                <td class="right money">
+                    <div th:each="item : ${category.last30Days}" 
+                        th:text="${item.value} + ' ' + ${item.currency.toUpperCase()}">
+                    </div>
+                    <a th:href="@{ /transfers/statistics( categoryId=${category.id} ) }">More...</a>
                 </td>
                 <td>
                    <div th:each="wallet : ${category.wallets}">
                         <a 
-                            th:href="'/wallets/' + ${wallet.id}" 
+                            th:href="'/wallets/' + ${wallet.id} + '/edit'" 
                             th:text="${wallet.title}">LINK</a>
                    </div>
-                </td>
-                <td th:text="${category.hasTransfers ? 'yes' : 'no'}">...</td>
-                <td style="display: flex; gap: 1rem;">
-                    
-                    <a class="button" th:href="'/categories/' + ${category.id}" href="#">Edit</a>
-                    
                 </td>
             </tr>
         </tbody>

@@ -8,8 +8,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.hibernate.annotations.Formula;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,16 +36,6 @@ public class Category {
 	
 	@Column(name = "title", nullable = false)
 	private String title;
-	
-	@Formula(value = """
-			(
-				SELECT count(t.id) > 0 
-				FROM transfer t
-				WHERE t.category_id = id
-			)
-			""")
-	@Setter(value = AccessLevel.PACKAGE)
-	private Boolean hasTransfers;
 	
 	@ManyToOne
 	@JoinColumn(name = "creator_id", nullable = false)

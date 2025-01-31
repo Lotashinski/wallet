@@ -7,8 +7,11 @@
   <div th:replace="index.html :: header"></div>
 
   <main class="container">
-  
+
     <section class="card content" th:object="${wallet}">
+    
+        <a onclick="history.back()" href="#">Go back</a>
+    
         <h3 th:if="${wallet.id == null}">Create new wallet</h3>
         <h3 th:if="${wallet.id != null}">Update wallet</h3>
         <form method="POST">
@@ -92,11 +95,12 @@
     
     <section th:if="${wallet.id != null}" class="info-box">
         <h3 class="info-box__header">Danger zone</h3>
-        <form th:action="'/wallets/' + ${wallet.id}" th:method="delete" th:if="${wallet.id != null}">
+        <form th:method="delete" th:if="${wallet.id != null}">
             <p>
                 Irreversible operation. All operations and settings will be deleted permanently.
                 <span class="underline">You will lose all related transactions.</span>
             </p>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="submit" class="button button-cancel" value="Delete Wallet">
         </form>
     </section>

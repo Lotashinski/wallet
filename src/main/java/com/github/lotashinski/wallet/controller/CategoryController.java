@@ -41,8 +41,7 @@ public class CategoryController {
 	@PostMapping("/new")
 	public String newCategory(SaveCategoryDto category) {
 		var item = transferCategoryService.create(category);
-		
-		return "redirect:/categories/" + item.getId();
+		return "redirect:/categories/" + item.getId() + "/edit";
 	}
 	
 	@GetMapping("/new")
@@ -52,7 +51,7 @@ public class CategoryController {
 		return "categories_form";
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/{id}/edit")
 	public String editPage(Model model, @PathVariable UUID id) {
 		model.addAttribute("category", transferCategoryService.get(id));
 		model.addAttribute("wallets", walletService.getCategoryWallets(id));
@@ -60,21 +59,21 @@ public class CategoryController {
 		return "categories_form";
 	}
 	
-	@RequestMapping(path = "/{id}", method = {RequestMethod.PUT, RequestMethod.POST})
+	@RequestMapping(path = "/{id}/edit", method = {RequestMethod.PUT, RequestMethod.POST})
 	public String edit(@PathVariable UUID id, SaveCategoryDto category) {
 		transferCategoryService.update(id, category);
 		
-		return "redirect:/categories/" + id;
+		return "redirect:/categories/" + id + "/edit";
 	}
 	
-	@PostMapping(path = "/{id}/wallets")
+	@PostMapping(path = "/{id}/edit/wallets")
 	public String editCategoryWallets(@PathVariable UUID id, @RequestParam(required = false) Collection<UUID> selected) {
 		walletService.setCategoryWallets(id, selected);
 		
-		return "redirect:/categories/" + id;
+		return "redirect:/categories/" + id + "/edit";
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/{id}/edit")
 	public String delete(@PathVariable UUID id) {
 		transferCategoryService.delete(id);
 		

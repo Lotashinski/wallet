@@ -78,9 +78,25 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			LEFT JOIN FETCH t.category c
 			WHERE c in (:categories)
 				AND t.time > :after
+			ORDER BY t.time DESC
 			""")
-	Collection<? extends Transfer> findByCategoriesAfterTimestamp(
+	List<? extends Transfer> findByCategoriesAfterTimestamp(
 			@Param("categories") Collection<? extends Category> categories,
 			@Param("after") LocalDateTime after);
 	
+	
+	@Query("""
+			SELECT t
+			FROM Transfer t
+			JOIN FETCH t.wallet w
+			LEFT JOIN FETCH t.category c
+			WHERE c in (:categories)
+				AND t.time >= :start
+				AND t.time <= :end
+			ORDER BY t.time DESC
+			""")
+	List<? extends Transfer> findByCategoriesAndPersiod(
+			@Param("categories") Collection<? extends Category> categories,
+			@Param("start") LocalDateTime start,
+			@Param("end") LocalDateTime end);
 }

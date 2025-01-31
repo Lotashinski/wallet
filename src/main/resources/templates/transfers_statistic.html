@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="index.html :: head"></head>
+
+<body>
+  <div th:replace="~{ index.html :: header }"></div>
+
+  <main class="container">
+  
+    <section class="card content">
+        
+        <a onclick="history.back()" href="#">Go back</a>
+        
+        <h3 th:text="${category.title}">TITLE</h3>
+        
+        <p>
+            From <time th:datetime="${start}" th:text="${#temporals.format(start, 'dd MMM yyyy HH:mm')}">start</time> 
+            to <time th:datetime="${end}" th:text="${#temporals.format(end, 'dd MMM yyyy HH:mm')}"></time>
+        </p>
+        
+        <form method="get">
+            <input type="hidden" name="categoryId" th:value="${category.id}"/>
+        
+            <label for="start">From</label>
+            <input type="datetime-local" name="start" id="start" th:value="${#temporals.format(start, 'yyyy-MM-dd HH:mm')}" value="2025-10-11T15:00"/>
+            
+            <label for="end">To</label>
+            <input type="datetime-local" name="end" id="end" th:value="${#temporals.format(end, 'yyyy-MM-dd HH:mm')}" value="2025-10-11T15:00"/>
+            
+            <input class="button" type="submit" value="Search" />
+        </form>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Value</th>
+                    <th>Wallet</th>
+                    <th>Description</th>
+                    <th>Settings</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="transfer : ${transfers}">
+                    <td th:text="${#temporals.format(transfer.time, 'dd MMM yyyy HH:mm')}">...</td>
+                    <td class="money right" th:text="${transfer.value} + ' ' + ${transfer.currencyCode.toUpperCase()}">...</td>
+                    <td>
+                        <a th:href="'/transfers?walletId=' + ${transfer.walletId}" th:text="${transfer.walletTitle}"></a>
+                    </td>
+                    <td th:text="${transfer.description}">...</td>
+                    <td>
+                        <a th:href="'/transfers/' + ${transfer.id}" class="button">Edit</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </section>
+  </main>
+
+  <div th:replace="~{ index.html :: footer }"></div>
+
+</body>
+
+</html>

@@ -7,7 +7,11 @@
   <div th:replace="index.html :: header"></div>
 
   <main class="container">
+  
     <section class="card content" th:if="${wallets.isEmpty()}">
+        
+        <a onclick="history.back()" href="#">Go back</a>
+        
         <a href="/wallets/new" class="button">Create new wallet</a>
     
         <p class="medium center">
@@ -16,9 +20,10 @@
     </section>
   
     <section class="card content" th:if="${! wallets.isEmpty()}">
-        <a href="/wallets/new" class="button">Create new wallet</a>
         
-        <b>Amount in wallets</b>
+        <a onclick="history.back()" href="#">Go back</a>
+        
+        <h3>Amount in wallets</h3>
         <table>
             <tr th:each="item : ${sum}" class="money">
                 <td th:text="${item.currency.toUpperCase()}">
@@ -28,24 +33,28 @@
             </tr>
         </table>
         
-        
+        <a href="/wallets/new" class="button">Create new wallet</a>
         <table class="table">
         <thead>
           <tr>
             <th>Title</th>
             <th>Value</th>
-            <th>Settings</th>
           </tr>
         </thead>
         <tbody>
             <tr th:each="wallet : ${wallets}">
-                <td th:text="${wallet.title}">...</td>
-                <td class="money right">
-                    <div th:each="value : ${wallet.values}" th:text="${value.value} + ' ' + ${value.currency.toUpperCase()}"></div>
+                <td>
+                    <span th:text="${wallet.title}"></span>
+                    <a th:href="'/wallets/' + ${wallet.id} + '/edit'" href="#">
+                        <img class="text-ico" alt="Edit" th:src="@{/pen.svg}" src="#">
+                    </a>
                 </td>
-                <td style="display: flex; gap: 1rem;">
-                    <a class="button" th:href="'/transfers?walletId=' + ${wallet.id}" href="#">Transfers</a>
-                    <a class="button" th:href="'/wallets/' + ${wallet.id}" href="#">Edit</a>
+                <td class="money right">
+                    <div th:if="${wallet.values.size() == 0}">
+                        Empty...
+                    </div>
+                    <div th:each="value : ${wallet.values}" th:text="${value.value} + ' ' + ${value.currency.toUpperCase()}"></div>
+                    <a th:href="'/transfers?walletId=' + ${wallet.id}" href="#">Manage transfers</a>
                 </td>
             </tr>
         </tbody>

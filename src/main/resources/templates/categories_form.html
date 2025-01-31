@@ -8,6 +8,9 @@
 
   <main class="container">
     <section class="card content" th:object="${category}">
+        
+        <a onclick="history.back()" href="#">Go back</a>
+    
         <h3 th:if="${category.id == null}">Create new category</h3>
         <h3 th:if="${category.id != null}" th:text="'Update category &quot;' + ${category.title} + '&quot;'">UPDATE CATEGORY</h3>
         <form method="POST">
@@ -62,13 +65,14 @@
     
     <section th:if="${category.id != null}" class="info-box">
         <h3 class="info-box__header">Danger zone</h3>
-        <form th:action="'/categories/' + ${category.id}" th:method="delete">
+        <form th:method="delete">
             <p>
                 Irreversible operation. All operations and settings will be deleted permanently. 
                 <span class="underline">
                     All related transactions will lose their category, but will be saved in the system.
                 </span>
             </p>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="submit" class="button button-cancel" value="Delete">
         </form>
     </section>

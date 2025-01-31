@@ -1,6 +1,7 @@
 package com.github.lotashinski.wallet.service;
 
-import java.util.Collection;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -12,8 +13,10 @@ public interface TransfersServiceInterface {
 
 	Page<? extends ItemTransferDto> getByWallet(UUID walletId, int pageNumber);
 	
-	Collection<? extends ItemTransferDto> getLast();
+	List<? extends ItemTransferDto> getLast();
 
+	
+	List<? extends ItemTransferDto> getByCategoryAndPeriod(UUID category, LocalDateTime start, LocalDateTime end);
 	
 	ItemTransferDto get(UUID transferId);
 	

@@ -1,5 +1,7 @@
 package com.github.lotashinski.wallet.controller;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
@@ -50,6 +52,22 @@ public class TransferController {
 		return "transfers";
 	}
 
+	@GetMapping("/statistics")
+	public String statistic(
+			@RequestParam UUID categoryId, 
+			@RequestParam Optional<LocalDateTime> start, 
+			@RequestParam Optional<LocalDateTime> end,
+			Model model) {
+		LocalDateTime startCalc = start.orElse(LocalDateTime.now().minusDays(30));
+		LocalDateTime endCalc = end.orElse(LocalDateTime.now());
+		
+		model.addAttribute("start", startCalc);
+		model.addAttribute("end", endCalc);
+		model.addAttribute("category", categoryService.get(categoryId));
+		model.addAttribute("transfers", transferService.getByCategoryAndPeriod(categoryId, startCalc, endCalc));
+		
+		return "transfers_statistic";
+	}
 	
 	@GetMapping("/new")
 	public String createPage(@RequestParam UUID walletId, Model model) {

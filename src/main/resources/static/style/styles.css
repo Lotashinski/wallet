@@ -169,6 +169,11 @@ h1, h2, h3, h4, h5, h6, li::marker {
     color: var(--color-m1);
 }
 
+.text-ico {
+	width: 1.3em;
+	height: 1.3em;
+}
+
 .table {
 	width: 100%;
 	border: none;
@@ -177,7 +182,7 @@ h1, h2, h3, h4, h5, h6, li::marker {
 }
 
 .right, .table td.right {
-  text-align: right;
+    text-align: right;
 }
 
 .money {
