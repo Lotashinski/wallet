@@ -12,7 +12,7 @@ spring:
               format_sql: true
         hibernate:
             ddl-auto: validate
-        show-sql: true
+        show-sql: false
     liquibase:
         enabled: true
     mvc:
@@ -26,8 +26,8 @@ logging:
             springframework:
                 boot:
                     autoconfigure: ERROR
-        root: debug
-        sql: debug
+        root: info
+        sql: info
                  
           
 server:
