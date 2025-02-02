@@ -84,7 +84,6 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 			@Param("categories") Collection<? extends Category> categories,
 			@Param("after") LocalDateTime after);
 	
-	
 	@Query("""
 			SELECT t
 			FROM Transfer t

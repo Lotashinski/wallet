@@ -2,100 +2,107 @@
 <html xmlns:th="https://www.thymeleaf.org">
 
 <head th:fragment="head">
-  <meta charset="UTF-8">
-  <title>Wallets</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" th:href="@{/style/styles.css}" href="/static/style/styles.css">
-  <script th:src="@{/js/script.js}" src="/static/js/script.js"></script>
+	<meta charset="UTF-8">
+	<title>Wallets</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" th:href="@{/style/styles.css}" href="/static/style/styles.css">
+	<script th:src="@{/js/script.js}" src="/static/js/script.js"></script>
 </head>
 
 <body>
-  <header th:fragment="header" class="container header">
-    <h1 class="header__brand">Wallet</h1>
-    <ul class="header__navigation" sec:authorize="isAuthenticated()">
-      <li><a class="header__navigation-item" href="/">Home</a></li>
-      <li><a class="header__navigation-item" href="/wallets">My wallets</a></li>
-      <li><a class="header__navigation-item" href="/categories">Categories</a></li>
-    </ul>
-    
-    <ul class="header__navigation" sec:authorize="isAuthenticated()">
-        <li>
-            <a class="header__navigation-item" href="/profile" >
-                <img class="header__navigation-pic" alt="profile picture" th:src="@{/img/profile.png}"/> 
-                <span sec:authentication="name"></span>
-            </a>
-        </li>        
-    </ul>
-    
-    <ul class="header__navigation" sec:authorize="isAnonymous()">
-      <li><a class="header__navigation-item" href="/login">Sign In</a></li>
-      <li><a class="header__navigation-item" href="/registration">Sign Up</a></li>
-    </ul>
-  </header>
-  
-  <main class="container" sec:authorize="isAuthenticated()">
-  
-    <article th:if="${wallets.isEmpty() || categories.isEmpty()}" class="info-box">
-        <p class="accent center">
-            You have not created any 
-            <span th:if="${wallets.isEmpty() && categories.isEmpty()}">wallet or category</span>
-            <span th:if="${wallets.isEmpty() && ! categories.isEmpty()}">wallet</span>
-            <span th:if="${! wallets.isEmpty() && categories.isEmpty()}">category</span> 
-            yet!
-        </p>
-        <p class="medium center">
-            Maybe it's time to fix this and
-            <a th:if="${wallets.isEmpty()}"
-                 href="/wallets/new">create new wallet</a> 
-            <span th:if="${wallets.isEmpty() && categories.isEmpty()}">or</span>
-            <a th:if="${categories.isEmpty()}"
-                href="/categories/new">create new category</a>?
-        </p>
-    </article>
-    
-    <article th:if="${transfers.isEmpty()}" class="info-box">
-        <p class="center medium">
-            Add expenses or income to see last transfers here.
-        </p>
-    </article>
-    
-    <article th:if="${! transfers.isEmpty()}" class="info-box">
-      <h3 class="info-box__header">
-        Last transfers
-      </h3>
-      
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>Value</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Wallet</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="transfer : ${transfers}">
-                <td th:text="${#temporals.format(transfer.time, 'dd MMM yyyy HH:mm')}">...</td>
-                <td th:text="${transfer.value} + ' ' + ${transfer.currencyCode.toUpperCase()}">...</td>
-                <td th:text="${transfer.categoryTitle}">...</td>
-                <td th:text="${transfer.description}">...</td>
-                <td><a th:href="'/transfers?walletId=' + ${transfer.walletId}" th:text="${transfer.walletTitle}">...</a></td>
-            </tr>
-        </tbody>
-      </table>
-      
-    </article>
-  </main>
+	<header th:fragment="header" class="container header">
 
-  <footer class="footer container">
-    <section class="content">
-      <address>
-        Developer: Alexander Lotashinsky
-      </address>
-      <time datetime="2024-12-22">22 Dec 2024</time>
-    </section>
-  </footer>
+		<h1 class="header__brand">Wallet</h1>
+		<ul class="header__navigation" sec:authorize="isAuthenticated()">
+			<li><a class="header__navigation-item" href="/">Home</a></li>
+			<li><a class="header__navigation-item" href="/wallets">My wallets</a></li>
+			<li><a class="header__navigation-item" href="/categories">Categories</a></li>
+		</ul>
+
+		<ul class="header__navigation" sec:authorize="isAuthenticated()">
+			<li>
+				<a class="header__navigation-item" href="/profile">
+					<img class="header__navigation-pic" alt="profile picture" th:src="@{/img/profile.png}" />
+					<span sec:authentication="name"></span>
+				</a>
+			</li>
+		</ul>
+
+		<ul class="header__navigation" sec:authorize="isAnonymous()">
+			<li><a class="header__navigation-item" href="/login">Sign In</a></li>
+			<li><a class="header__navigation-item" href="/registration">Sign Up</a></li>
+		</ul>
+	</header>
+
+	<main class="container" sec:authorize="isAuthenticated()">
+
+		<article th:if="${wallets.isEmpty() || categories.isEmpty()}" class="info-box">
+			<p class="accent center">
+				You have not created any
+				<span th:if="${wallets.isEmpty() && categories.isEmpty()}">wallet or category</span>
+				<span th:if="${wallets.isEmpty() && ! categories.isEmpty()}">wallet</span>
+				<span th:if="${! wallets.isEmpty() && categories.isEmpty()}">category</span>
+				yet!
+			</p>
+			<p class="medium center">
+				Maybe it's time to fix this and
+				<a th:if="${wallets.isEmpty()}" href="/wallets/new">create new wallet</a>
+				<span th:if="${wallets.isEmpty() && categories.isEmpty()}">or</span>
+				<a th:if="${categories.isEmpty()}" href="/categories/new">create new category</a>?
+			</p>
+		</article>
+
+		<article th:if="${transfers.isEmpty()}" class="info-box">
+			<p class="center medium">
+				Add expenses or income to see last transfers here.
+			</p>
+		</article>
+
+		<article th:if="${! transfers.isEmpty()}" class="info-box">
+			<h3 class="info-box__header">
+				Last transfers
+			</h3>
+
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Time</th>
+						<th>Value</th>
+						<th>Category</th>
+						<th>Description</th>
+						<th>Wallet</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="transfer : ${transfers}">
+						<td th:text="${#temporals.format(transfer.time, 'dd MMM yyyy HH:mm')}">...</td>
+						<td th:text="${transfer.value} + ' ' + ${transfer.currencyCode.toUpperCase()}">...</td>
+						<td th:text="${transfer.categoryTitle}">...</td>
+						<td th:text="${transfer.description}">...</td>
+						<td><a th:href="'/transfers?walletId=' + ${transfer.walletId}"
+								th:text="${transfer.walletTitle}">...</a></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</article>
+	</main>
+
+	<footer class="footer container">
+		<article class="content">
+			<address>
+				Developer: Alexander Lotashinsky
+			</address>
+			<section>
+				<a href="https://github.com/Lotashinski/wallet">
+					<img class="text-ico" alt="Github avatar" src="https://avatars.githubusercontent.com/u/41431001?v=4">
+				</a>
+			</section>
+			<section>
+				<time datetime="2024-12-22">22 Dec 2024</time>
+			</section>
+		</article>
+	</footer>
 
 </body>
 

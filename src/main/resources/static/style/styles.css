@@ -8,7 +8,7 @@
     --color-m1: #F0614F;
     --color-m2: #c56e62;
     --color-m3: #f5f0f0;
-    --color-m4: #f1efee;
+    --color-m4: #ffffff;
     --color-m5: #463A38;
     --color-m6: #332320;
 
@@ -29,11 +29,11 @@
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: var(--color-m4);
+    background-color: var(--color-m3);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    min-width: 100vh;
+    min-width: 100vw;
     gap: 1rem;
     position: absolute;
 }
@@ -100,7 +100,7 @@ form label {
 }
 
 .card {
-    background-color: white;
+    background-color: var(--color-m4);
     box-shadow: var(--shadow);
     transition: all 200ms ease;
     display: flex;
