@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<body>
+	
+    <aside
+    	class="paginator" 
+    	th:fragment="paginator ( current, total , href )" 
+		th:if="${ total > 1 }"
+		th:with="ref = ${ href.contains('?') ? href : href + '?' }, deltaPage = ${total} - ${current}">
+        
+        <a 
+        	class="paginator-item" 
+            th:if="${current} > 3"
+            th:href="${ ref + '&pageNumber=1' }">1</a>
+        
+        <span class="paginator-placebo" th:if="${current} > 4">...</span>
+        
+        <a 
+        	class="paginator-item"
+            th:if="${current} > 2"
+            th:href="${ ref + '&pageNumber=' + (current - 2) }"
+            th:text="${current} - 2">C - 2</a>
+        <a 
+        	class="paginator-item"
+            th:if="${current} > 1"
+            th:href="${ ref + '&pageNumber=' + (current - 1) }"
+            th:text="${current} - 1">C - 1</a>
+        
+        <span
+        	class="paginator-current" 
+        	th:text="${current}">CURRENT</span>
+        
+        <a 
+        	class="paginator-item"
+            th:if="${deltaPage} > 0"
+            th:href="${ ref + '&pageNumber=' + (current + 1) }"
+            th:text="${current} + 1">C + 1</a>
+            
+        <a 
+        	class="paginator-item"
+            th:if="${deltaPage} > 1"
+            th:href="${ ref + '&pageNumber=' + (current + 2) }"
+            th:text="${current} + 2">C + 2</a>
+        
+        <span class="paginator-placebo" th:if="${deltaPage} > 3">...</span>
+        
+        <a 
+        	class="paginator-item"
+            th:if="${deltaPage} > 2"
+            th:href="${ ref + '&pageNumber=' + total }"
+            th:text="${total}">LAST</a>
+            
+      </aside>
+</body>
+</html>

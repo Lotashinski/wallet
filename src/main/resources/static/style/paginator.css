@@ -1,0 +1,39 @@
+.paginator {
+	display: flex;
+	min-width: 100%;
+	overflow-x: scroll;
+	justify-content: center;
+	gap: -1px;
+}
+
+.paginator-current,
+.paginator-item {
+	background-color: var(--color-t6);
+	display: inline-block;
+	cursor: pointer;
+    border: var(--color-m1) solid 2px;
+    padding: 0.25rem 0.5rem;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: all 200ms ease;
+    color: var(--color-m1);
+}
+
+.paginator-current,
+.paginator-placebo, 
+.paginator-item {
+	min-width: 2rem;	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.paginator-current, .paginator-placebo {
+	border-color: var(--color-m1);
+	background-color: var(--color-m1);	
+	color: var(--color-t6);
+}
+
+.paginator-item:hover {
+	background-color: var(--color-m1);
+    color: var(--color-t6);
+}

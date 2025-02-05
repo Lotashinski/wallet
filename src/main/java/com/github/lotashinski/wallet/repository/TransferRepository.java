@@ -94,9 +94,10 @@ public interface TransferRepository extends JpaRepository<Transfer, UUID> {
 				AND t.time <= :end
 			ORDER BY t.time DESC
 			""")
-	List<? extends Transfer> findByCategoriesAndPersiod(
+	Page<? extends Transfer> findByCategoriesAndPersiod(
 			@Param("categories") Collection<? extends Category> categories,
 			@Param("start") LocalDateTime start,
-			@Param("end") LocalDateTime end);
+			@Param("end") LocalDateTime end, 
+			Pageable pageable);
 	
 }

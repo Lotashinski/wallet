@@ -128,18 +128,18 @@ public class TransferService implements TransfersServiceInterface {
 	}
 
 	@Override
-	public List<? extends ItemTransferDto> getByCategoryAndPeriod(UUID categoryId, LocalDateTime start, LocalDateTime end) {
+	public Page<? extends ItemTransferDto> getByCategoryAndPeriod(UUID categoryId, LocalDateTime start, LocalDateTime end, int pageNumber) {
 		Person person = SecurityHolderAdapter.getCurrentUser();
 		log.info("Get transfers by category {} and period {}-{}. User {}", categoryId, start, end, person.getId());
 		
 		Category category = categoryRepository.findByPersonAndId(person, categoryId)
 				.orElseThrow(() -> new NotFoundHttpException(String.format("Categgory %s not found", categoryId)));
 		
+		Pageable pageable = PageRequest.of(pageNumber, 15);
+		
 		return transferRepository
-				.findByCategoriesAndPersiod(List.of(category), start, end)
-				.stream()
-				.map(transferMapper::toDto)
-				.toList();
+				.findByCategoriesAndPersiod(List.of(category), start, end, pageable)
+				.map(transferMapper::toDto);
 	}
 
 }

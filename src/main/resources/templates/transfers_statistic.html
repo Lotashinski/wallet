@@ -56,6 +56,13 @@
             </tbody>
         </table>
         
+        <th:block 
+        	th:with="href = '/transfers/statistics?categoryId=' + ${category.id} + '&start=' + ${start} + '&end=' + ${end}">
+        	<div 
+          		th:replace="~{ inc/pagination.html :: paginator(${pageNumber}, ${transfers.totalPages}, ${href}) }" >
+        	</div>
+        </th:block>
+        
     </section>
   </main>
 

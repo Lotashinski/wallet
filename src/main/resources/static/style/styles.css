@@ -3,6 +3,7 @@
 @import url(fonts/stylesheet.css);
 @import url(footer.css);
 @import url(info-box.css);
+@import url(paginator.css);
 
 :root {
     --color-m1: #F0614F;

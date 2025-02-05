@@ -44,7 +44,8 @@ public class TransferController {
 	public String index(@RequestParam UUID walletId, 
 			@RequestParam(defaultValue = "1")
 			@Min(1)
-			int pageNumber, Model model) {
+			int pageNumber, 
+			Model model) {
 		model.addAttribute("wallet", walletService.get(walletId));
 		model.addAttribute("transfers", transferService.getByWallet(walletId, pageNumber - 1));
 		model.addAttribute("pageNumber", pageNumber);
@@ -57,6 +58,9 @@ public class TransferController {
 			@RequestParam UUID categoryId, 
 			@RequestParam Optional<LocalDateTime> start, 
 			@RequestParam Optional<LocalDateTime> end,
+			@RequestParam(defaultValue = "1") 
+			@Min(1)
+			int pageNumber,
 			Model model) {
 		LocalDateTime startCalc = start.orElse(LocalDateTime.now().minusDays(30));
 		LocalDateTime endCalc = end.orElse(LocalDateTime.now());
@@ -64,7 +68,8 @@ public class TransferController {
 		model.addAttribute("start", startCalc);
 		model.addAttribute("end", endCalc);
 		model.addAttribute("category", categoryService.get(categoryId));
-		model.addAttribute("transfers", transferService.getByCategoryAndPeriod(categoryId, startCalc, endCalc));
+		model.addAttribute("transfers", transferService.getByCategoryAndPeriod(categoryId, startCalc, endCalc, pageNumber - 1));
+		model.addAttribute("pageNumber", pageNumber);
 		
 		return "transfers_statistic";
 	}

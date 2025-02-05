@@ -16,7 +16,7 @@ public interface TransfersServiceInterface {
 	List<? extends ItemTransferDto> getLast();
 
 	
-	List<? extends ItemTransferDto> getByCategoryAndPeriod(UUID category, LocalDateTime start, LocalDateTime end);
+	Page<? extends ItemTransferDto> getByCategoryAndPeriod(UUID category, LocalDateTime start, LocalDateTime end, int pageNumber);
 	
 	ItemTransferDto get(UUID transferId);
 	
