@@ -13,7 +13,12 @@
             th:if="${current} > 3"
             th:href="${ ref + '&pageNumber=1' }">1</a>
         
-        <span class="paginator-placebo" th:if="${current} > 4">...</span>
+        <span class="paginator-placebo" th:if="${current} > 5 ">...</span>
+        
+        <a 
+        	class="paginator-item"
+            th:if="${ current } == 5"
+            th:href="${ ref + '&pageNumber=2' }">2</a>
         
         <a 
         	class="paginator-item"
@@ -42,13 +47,19 @@
             th:href="${ ref + '&pageNumber=' + (current + 2) }"
             th:text="${current} + 2">C + 2</a>
         
-        <span class="paginator-placebo" th:if="${deltaPage} > 3">...</span>
+        <a 
+        	class="paginator-item"
+            th:if="${deltaPage} == 4"
+            th:href="${ ref + '&pageNumber=' + (total - 1) }"
+            th:text="${ total - 1 }">LAST - 1</a>
+        
+        <span class="paginator-placebo" th:if="${deltaPage} > 4">...</span>
         
         <a 
         	class="paginator-item"
             th:if="${deltaPage} > 2"
             th:href="${ ref + '&pageNumber=' + total }"
-            th:text="${total}">LAST</a>
+            th:text="${ total }">LAST</a>
             
       </aside>
 </body>

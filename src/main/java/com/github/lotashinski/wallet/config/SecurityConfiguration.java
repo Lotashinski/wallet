@@ -20,7 +20,8 @@ public class SecurityConfiguration {
 		return http
 				.authorizeHttpRequests(request -> 
 							request
-								.requestMatchers(HttpMethod.GET, "/error", "/favicon.ico", "/style/**", "/js/**").permitAll()
+								.requestMatchers(HttpMethod.GET, "/error", "/favicon.ico", "/style/**", "/js/**")
+									.permitAll()
 								.requestMatchers("/registration").permitAll()
 								.anyRequest().authenticated()
 						)

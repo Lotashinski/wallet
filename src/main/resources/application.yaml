@@ -18,8 +18,12 @@ spring:
     mvc:
       hiddenmethod:
         filter:
-          enabled: true
-
+          enabled: true 
+    web:  
+        resources:
+            cache:
+                cachecontrol:
+                    max_age: 365d
 logging:
     level:
         org:
