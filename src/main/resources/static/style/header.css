@@ -25,6 +25,10 @@
     padding: 0; 
     margin: 0;
     list-style: none;
+    
+    align-items: center;
+    justify-content: center;
+    height: 48px;
 }
 
 .header__navigation-pic {
@@ -33,7 +37,7 @@
 }
 
 .header__navigation-item {
-	height: 64px;
+	height: 48px;
 	
     display: flex;
     align-items: center;

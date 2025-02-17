@@ -19,6 +19,18 @@
 			<li><a class="header__navigation-item" href="/categories">Categories</a></li>
 		</ul>
 
+       <!--  <aside class="header__navigation">
+            <img class="header__navigation-pic" alt="dark mode" th:src="@{/img/halfmoon.png}" />
+            <label class="switch">
+                <input type="checkbox" id="theme_selector">
+                <span class="slider"></span>
+            </label>
+            <img class="header__navigation-pic" alt="light mode" th:src="@{/img/sun.png}" />
+            
+            <script type="text/javascript" src="/js/themes.js"></script>
+            
+        </aside>
+ -->
 		<ul class="header__navigation" sec:authorize="isAuthenticated()">
 			<li>
 				<a class="header__navigation-item" href="/profile">
